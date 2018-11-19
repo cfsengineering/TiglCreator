@@ -80,13 +80,13 @@ public:
     TIGL_EXPORT CCPACSMaterialDefinition& GetMaterial();
     TIGL_EXPORT const CCPACSMaterialDefinition& GetMaterial() const;
 
-    TIGL_EXPORT TopoDS_Shape GetCellSkinGeometry(TiglCoordinateSystem cs = GLOBAL_COORDINATE_SYSTEM) const;
+    TIGL_EXPORT TopoDS_Shape GetSkinGeometry(TiglCoordinateSystem cs = GLOBAL_COORDINATE_SYSTEM) const;
 
     TIGL_EXPORT bool IsPartOfCell(TopoDS_Face);
     TIGL_EXPORT bool IsPartOfCell(TopoDS_Edge);
 
     TIGL_EXPORT std::string GetDefaultedUID() const OVERRIDE;
-    TIGL_EXPORT PNamedShape GetLoft() OVERRIDE;
+    TIGL_EXPORT PNamedShape GetLoft() const OVERRIDE;
     TIGL_EXPORT TiglGeometricComponentType GetComponentType() const OVERRIDE;
 
 private:
@@ -100,12 +100,12 @@ private:
 
     struct GeometryCache
     {
-        TopoDS_Shape cellSkinGeometry;
+        TopoDS_Shape skinGeometry;
 
         gp_Pln cutPlaneLE, cutPlaneTE, cutPlaneIB, cutPlaneOB;
         TopoDS_Shape planeShapeLE, planeShapeTE, planeShapeIB, planeShapeOB;
         TopoDS_Shape sparShapeLE, sparShapeTE;
-        gp_Pnt pC1, pC2, pC3, pC4;
+        gp_Pnt projectedIBLE, projectedOBLE, projectedIBTE, projectedOBTE;
     };
 
     template<class T>

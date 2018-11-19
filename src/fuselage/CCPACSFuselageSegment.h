@@ -169,11 +169,8 @@ private:
     // Cleanup routine
     void Cleanup();
 
-    // Builds up the shape cache
-    void UpdateShapeCache() const;
-
     // Builds the loft between the two segment sections
-    PNamedShape BuildLoft() OVERRIDE;
+    PNamedShape BuildLoft() const OVERRIDE;
 
     void SetFaceTraits(PNamedShape loft) const;
 

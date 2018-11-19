@@ -65,27 +65,26 @@ public:
     TIGL_EXPORT const Handle(Geom_BSplineSurface) GetSurface() const;
 
 protected:
-    PNamedShape BuildLoft() OVERRIDE;
+    PNamedShape BuildLoft() const OVERRIDE;
 
 private:
-    struct ChordfaceCache {
+    struct ChordSurfaceCache {
         Handle(Geom_BSplineSurface) chordSurface;
         std::vector<double> elementEtas;
     };
 
-    void BuildChordSurface(ChordfaceCache& cache) const;
 
-private:
     CTiglWingChordface(const CTiglWingChordface&); // disabled copy constructor
 
     void unregisterShape();
+    void BuildChordSurface(ChordSurfaceCache& cache) const;
 
     CTiglWingSegmentList _segments;
     std::string _uid;
 
     CTiglUIDManager* _uidManager;
 
-    Cache<ChordfaceCache, CTiglWingChordface> _surfaceCache;
+    Cache<ChordSurfaceCache, CTiglWingChordface> _cache;
 };
 
 }

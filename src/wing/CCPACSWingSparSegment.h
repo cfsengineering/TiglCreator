@@ -116,7 +116,7 @@ private:
 
     gp_Vec GetUpVector(const std::string& positionUID, gp_Pnt midplanePnt) const;
 
-    PNamedShape BuildLoft() OVERRIDE;
+    PNamedShape BuildLoft() const OVERRIDE;
 
 private:
     CCPACSWingSparSegment(const CCPACSWingSparSegment&);
@@ -136,7 +136,7 @@ private:
  * 
  * The reference axis is given in normal.
  */
-TIGL_EXPORT bool PointIsInfrontSparGeometry(gp_Ax1 normal, gp_Pnt point, TopoDS_Shape sparGeometry);
+TIGL_EXPORT bool PointIsInfrontSparGeometry(gp_Dir normal, gp_Pnt point, TopoDS_Shape sparGeometry);
 
 } // end namespace tigl
 
