@@ -148,9 +148,8 @@ protected:
 
     void SetFaceTraits(PNamedShape loft) const;
 
-
     // Return the the centers of each CPCACS elements contains in the fuselage in the form <UID, CTiglPoint>
-    std::map< std::string , CTiglPoint > GetElementsCenters();
+    std::map<std::string, CTiglPoint> GetElementsCenters();
 
     // Get the UID of the elements contains in the fuselage in the creator order
     std::vector<std::string> GetCreatorGraph();
@@ -174,9 +173,8 @@ protected:
     std::vector<CTiglTransformation> GetTransformationChain(const std::string& elementUID);
 
     // Return the transformation that the element should have to have its origin at the given point
-    CTiglTransformation GetTransformToPlaceElementByTranslationAt(const std::string &elementUID, const CTiglPoint &wantedOriginP);
-
-
+    CTiglTransformation GetTransformToPlaceElementByTranslationAt(const std::string& elementUID,
+                                                                  const CTiglPoint& wantedOriginP);
 
 private:
     // get short name for loft

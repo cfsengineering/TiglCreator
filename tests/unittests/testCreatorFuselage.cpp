@@ -2,7 +2,6 @@
 // Created by cfse on 12/4/18.
 //
 
-
 #include "test.h" // Brings in the GTest framework
 #include "tigl.h"
 
@@ -13,72 +12,66 @@
 #include <string.h>
 TEST(CreatorFuselage, getLength_SimpleModel)
 {
-const char* filename = "TestData/simpletest.cpacs.xml";
+    const char* filename = "TestData/simpletest.cpacs.xml";
 
-TiglCPACSConfigurationHandle tiglHandle = -1;
-TixiDocumentHandle tixiHandle = -1;
+    TiglCPACSConfigurationHandle tiglHandle = -1;
+    TixiDocumentHandle tixiHandle           = -1;
 
-ASSERT_EQ(SUCCESS, tixiOpenDocument(filename, &tixiHandle));
-ASSERT_EQ(TIGL_SUCCESS, tiglOpenCPACSConfiguration(tixiHandle, "", &tiglHandle));
+    ASSERT_EQ(SUCCESS, tixiOpenDocument(filename, &tixiHandle));
+    ASSERT_EQ(TIGL_SUCCESS, tiglOpenCPACSConfiguration(tixiHandle, "", &tiglHandle));
 
-tigl::CCPACSConfigurationManager& manager = tigl::CCPACSConfigurationManager::GetInstance();
-tigl::CCPACSConfiguration& config =  manager.GetConfiguration(tiglHandle);
+    tigl::CCPACSConfigurationManager& manager = tigl::CCPACSConfigurationManager::GetInstance();
+    tigl::CCPACSConfiguration& config         = manager.GetConfiguration(tiglHandle);
 
-tigl::CCPACSFuselage& fuselage =  config.GetFuselage(1);
-double length = fuselage.GetLength();
+    tigl::CCPACSFuselage& fuselage = config.GetFuselage(1);
+    double length                  = fuselage.GetLength();
 
-ASSERT_NEAR(2, length, 0.0001);
+    ASSERT_NEAR(2, length, 0.0001);
 
-tiglCloseCPACSConfiguration(tiglHandle);
-tixiCloseDocument(tixiHandle);
-
+    tiglCloseCPACSConfiguration(tiglHandle);
+    tixiCloseDocument(tixiHandle);
 }
-
-
 
 TEST(CreatorFuselage, getLength_BoxWingModel)
 {
     const char* filename = "TestData/boxWing.xml";
 
     TiglCPACSConfigurationHandle tiglHandle = -1;
-    TixiDocumentHandle tixiHandle = -1;
+    TixiDocumentHandle tixiHandle           = -1;
 
     ASSERT_EQ(SUCCESS, tixiOpenDocument(filename, &tixiHandle));
     ASSERT_EQ(TIGL_SUCCESS, tiglOpenCPACSConfiguration(tixiHandle, "", &tiglHandle));
 
     tigl::CCPACSConfigurationManager& manager = tigl::CCPACSConfigurationManager::GetInstance();
-    tigl::CCPACSConfiguration& config =  manager.GetConfiguration(tiglHandle);
+    tigl::CCPACSConfiguration& config         = manager.GetConfiguration(tiglHandle);
 
-    tigl::CCPACSFuselage& fuselage =  config.GetFuselage(1);
-    double length = fuselage.GetLength();
+    tigl::CCPACSFuselage& fuselage = config.GetFuselage(1);
+    double length                  = fuselage.GetLength();
 
     ASSERT_NEAR(37, length, 2);
 
     tiglCloseCPACSConfiguration(tiglHandle);
     tixiCloseDocument(tixiHandle);
-
 }
-
 
 TEST(CreatorFuselage, getLength_CrmWingModel)
 {
     const char* filename = "TestData/crm.xml";
 
     TiglCPACSConfigurationHandle tiglHandle = -1;
-    TixiDocumentHandle tixiHandle = -1;
+    TixiDocumentHandle tixiHandle           = -1;
 
     ASSERT_EQ(SUCCESS, tixiOpenDocument(filename, &tixiHandle));
     ASSERT_EQ(TIGL_SUCCESS, tiglOpenCPACSConfiguration(tixiHandle, "", &tiglHandle));
 
     tigl::CCPACSConfigurationManager& manager = tigl::CCPACSConfigurationManager::GetInstance();
-    tigl::CCPACSConfiguration& config =  manager.GetConfiguration(tiglHandle);
+    tigl::CCPACSConfiguration& config         = manager.GetConfiguration(tiglHandle);
 
-    tigl::CCPACSFuselage& fuselage =  config.GetFuselage(1);
-    double length = fuselage.GetLength();
+    tigl::CCPACSFuselage& fuselage = config.GetFuselage(1);
+    double length                  = fuselage.GetLength();
 
     ASSERT_NEAR(61, length, 2);
 
     tiglCloseCPACSConfiguration(tiglHandle);
     tixiCloseDocument(tixiHandle);
-
 }

@@ -618,259 +618,248 @@ TopoDS_Shape transformFuselageProfileGeometry(const CTiglTransformation& fuselTr
 
 }
 
+double CCPACSFuselage::GetLength()
+{
+    std::string noise = GetNoiseUID();
+    std::string tail  = GetTailUID();
+    return GetLengthBetween(noise, tail);
+}
 
-    double CCPACSFuselage::GetLength()
-    {
-        std::string noise = GetNoiseUID();
-        std::string tail = GetTailUID();
-        return GetLengthBetween(noise, tail);
+double CCPACSFuselage::GetLengthBetween(const std::string& startElementUID, const std::string& endElementUID)
+{
+    std::map<std::string, CTiglPoint> centers = GetElementsCenters();
+    CTiglPoint delta                          = centers[endElementUID] - centers[startElementUID];
+    return delta.norm2();
+}
+
+std::map<std::string, CTiglPoint> CCPACSFuselage::GetElementsCenters()
+{
+
+    std::map<std::string, CTiglPoint> centers; // center of the element
+
+    CCPACSFuselageSegments& segments = GetSegments();
+    CCPACSFuselageSections& sections = GetSections();
+
+    std::string tempFromElmUID, tempToElmUID;
+    CTiglPoint fromCenter, toCenter;
+    TopoDS_Shape curve;
+    gp_Pnt centerPoint;
+    for (int i = 1; i <= segments.GetSegmentCount(); i++) {
+        CCPACSFuselageSegment& seg = segments.GetSegment(i);
+        tempFromElmUID             = seg.GetStartSectionElementUID();
+        tempToElmUID               = seg.GetEndSectionElementUID();
+
+        // get the center point of elements for later
+        curve                   = seg.getWireOnLoft(0);
+        centerPoint             = GetCenterOfMass(curve);
+        fromCenter              = CTiglPoint(centerPoint.XYZ());
+        centers[tempFromElmUID] = fromCenter; // overwrite if existing or create if not
+
+        curve                 = seg.getWireOnLoft(1);
+        centerPoint           = GetCenterOfMass(curve);
+        toCenter              = CTiglPoint(centerPoint.XYZ());
+        centers[tempToElmUID] = toCenter;
     }
 
-    double CCPACSFuselage::GetLengthBetween(const std::string& startElementUID, const std::string& endElementUID )
-    {
-        std::map< std::string , CTiglPoint >  centers = GetElementsCenters();
-        CTiglPoint delta = centers[endElementUID] - centers[startElementUID];
-        return  delta.norm2();
-    }
+    return centers;
+}
 
+std::vector<std::string> CCPACSFuselage::GetCreatorGraph()
+{
 
+    std::map<std::string, std::vector<std::string>> fuselageGraph; // graph (element vertex , <connected vertices>)
 
+    CCPACSFuselageSegments& segments = GetSegments();
+    CCPACSFuselageSections& sections = GetSections();
 
-    std::map< std::string , CTiglPoint > CCPACSFuselage::GetElementsCenters()
-    {
+    std::string tempFromElmUID, tempToElmUID;
 
+    for (int i = 1; i <= segments.GetSegmentCount(); i++) {
+        CCPACSFuselageSegment& seg = segments.GetSegment(i);
+        tempFromElmUID             = seg.GetStartSectionElementUID();
+        tempToElmUID               = seg.GetEndSectionElementUID();
 
-
-        std::map< std::string , CTiglPoint > centers; // center of the element
-
-        CCPACSFuselageSegments& segments = GetSegments();
-        CCPACSFuselageSections& sections = GetSections();
-
-        std::string tempFromElmUID, tempToElmUID;
-        CTiglPoint fromCenter, toCenter;
-        TopoDS_Shape curve;
-        gp_Pnt centerPoint;
-        for(int i = 1; i <= segments.GetSegmentCount() ; i++ )
-        {
-            CCPACSFuselageSegment& seg = segments.GetSegment(i);
-            tempFromElmUID = seg.GetStartSectionElementUID();
-            tempToElmUID = seg.GetEndSectionElementUID();
-
-            // get the center point of elements for later
-            curve =  seg.getWireOnLoft(0);
-            centerPoint = GetCenterOfMass(curve);
-            fromCenter = CTiglPoint(centerPoint.XYZ());
-            centers[tempFromElmUID] = fromCenter; // overwrite if existing or create if not
-
-            curve =  seg.getWireOnLoft(1);
-            centerPoint = GetCenterOfMass(curve);
-            toCenter = CTiglPoint(centerPoint.XYZ());
-            centers[tempToElmUID] = toCenter;
-
+        if (fuselageGraph.count(tempFromElmUID) == 0) {
+            fuselageGraph[tempFromElmUID] = std::vector<std::string>();
+            fuselageGraph[tempFromElmUID].push_back(tempToElmUID);
         }
-
-        return centers;
-
-    }
-
-
-    std::vector<std::string> CCPACSFuselage::GetCreatorGraph(){
-
-        std::map< std::string  , std::vector<std::string> > fuselageGraph; // graph (element vertex , <connected vertices>)
-
-        CCPACSFuselageSegments& segments = GetSegments();
-        CCPACSFuselageSections& sections = GetSections();
-
-        std::string tempFromElmUID, tempToElmUID;
-
-        for(int i = 1; i <= segments.GetSegmentCount() ; i++ )
-        {
-            CCPACSFuselageSegment& seg = segments.GetSegment(i);
-            tempFromElmUID = seg.GetStartSectionElementUID();
-            tempToElmUID = seg.GetEndSectionElementUID();
-
-            if( fuselageGraph.count(tempFromElmUID) == 0){
-                fuselageGraph[tempFromElmUID] = std::vector<std::string>();
+        else {
+            // check if the element exist
+            if (std::find(fuselageGraph[tempFromElmUID].begin(), fuselageGraph[tempFromElmUID].end(), tempToElmUID) ==
+                fuselageGraph[tempFromElmUID].end()) {
                 fuselageGraph[tempFromElmUID].push_back(tempToElmUID);
-            } else {
-                // check if the element exist
-                if (std::find(fuselageGraph[tempFromElmUID].begin(), fuselageGraph[tempFromElmUID].end(), tempToElmUID) == fuselageGraph[tempFromElmUID].end()) {
-                    fuselageGraph[tempFromElmUID].push_back(tempToElmUID);
-                }
             }
-            if( fuselageGraph.count(tempToElmUID) == 0){
-                fuselageGraph[tempToElmUID] = std::vector<std::string>();
+        }
+        if (fuselageGraph.count(tempToElmUID) == 0) {
+            fuselageGraph[tempToElmUID] = std::vector<std::string>();
+            fuselageGraph[tempToElmUID].push_back(tempFromElmUID);
+        }
+        else {
+            if (std::find(fuselageGraph[tempToElmUID].begin(), fuselageGraph[tempToElmUID].end(), tempFromElmUID) ==
+                fuselageGraph[tempToElmUID].end()) {
                 fuselageGraph[tempToElmUID].push_back(tempFromElmUID);
-            } else {
-                if (std::find(fuselageGraph[tempToElmUID].begin(), fuselageGraph[tempToElmUID].end(), tempFromElmUID) == fuselageGraph[tempToElmUID].end()) {
-                    fuselageGraph[tempToElmUID].push_back(tempFromElmUID);
-                }
             }
         }
+    }
 
+    std::map<std::string, CTiglPoint> centers = GetElementsCenters();
 
-        std::map< std::string , CTiglPoint > centers = GetElementsCenters();
+    // set noise and tail
+    std::string noise = "";
+    std::string tail  = "";
 
-        // set noise and tail
-        std::string  noise = "";
-        std::string  tail = "";
-
-        std::map< std::string , std::vector<std::string> >::iterator it;
-        for ( it = fuselageGraph.begin(); it != fuselageGraph.end(); it++ ){
-            if(it->second.size() == 1){
-                if(noise == ""){
-                    noise = it->first;
-                }
-                else if( tail == ""){
-                    tail = it->first;
-                }
-                else{
-                    throw CTiglError("CCPACSFuselage::GetCreatorGraph: none standard detected (multiple ends)");
-                }
-            } else if( it->second.size() < 1){
-                throw CTiglError("CCPACSFuselage:GetCreatorGraph: none standard graph detected (unconnected)");
-            } else if( it->second.size() > 2){
-                throw CTiglError("CCPACSFuselage:GetCreatorGraph: none standard graph detected (multiple branches)");
+    std::map<std::string, std::vector<std::string>>::iterator it;
+    for (it = fuselageGraph.begin(); it != fuselageGraph.end(); it++) {
+        if (it->second.size() == 1) {
+            if (noise == "") {
+                noise = it->first;
+            }
+            else if (tail == "") {
+                tail = it->first;
+            }
+            else {
+                throw CTiglError("CCPACSFuselage::GetCreatorGraph: none standard detected (multiple ends)");
             }
         }
-
-
-        if( tail == "" || noise == "") {
-            throw CTiglError("CCPACSFuselage:GetCreatorGraph: unexpected number of end");
+        else if (it->second.size() < 1) {
+            throw CTiglError("CCPACSFuselage:GetCreatorGraph: none standard graph detected (unconnected)");
         }
-
-        // the noise is the extremity that is closest to the origin
-        if( centers[tail].norm2() < centers[noise].norm2() ) {
-            std::string temp = noise;
-            noise = tail;
-            tail = temp;
+        else if (it->second.size() > 2) {
+            throw CTiglError("CCPACSFuselage:GetCreatorGraph: none standard graph detected (multiple branches)");
         }
+    }
 
-        // Now we have determine the noise and we go though the graph starting from the noise.
+    if (tail == "" || noise == "") {
+        throw CTiglError("CCPACSFuselage:GetCreatorGraph: unexpected number of end");
+    }
 
-        std::vector<std::string > simpleGraph; // a order list starting at the noise and going to the tail
+    // the noise is the extremity that is closest to the origin
+    if (centers[tail].norm2() < centers[noise].norm2()) {
+        std::string temp = noise;
+        noise            = tail;
+        tail             = temp;
+    }
 
-        std::string current = "";
-        std::string next, nextA, nextB;
-        std::set<std::string> usedElements ; // to check previous and cycle
+    // Now we have determine the noise and we go though the graph starting from the noise.
 
-        next = noise;
-        while( next != "" ){
+    std::vector<std::string> simpleGraph; // a order list starting at the noise and going to the tail
 
-            current = next;
-            simpleGraph.push_back(current);
-            usedElements.insert(current);
+    std::string current = "";
+    std::string next, nextA, nextB;
+    std::set<std::string> usedElements; // to check previous and cycle
 
-            if(fuselageGraph[current].size() == 1  ){
-                next = fuselageGraph[current][0];
-                if(usedElements.count(next) != 0){
-                    next = ""; // end case
-                }
-            }else if( fuselageGraph[current].size() == 2){
+    next = noise;
+    while (next != "") {
 
-                nextA = fuselageGraph[current][0];
-                nextB = fuselageGraph[current][1];
+        current = next;
+        simpleGraph.push_back(current);
+        usedElements.insert(current);
 
-                if( usedElements.count(nextA) == 0 ){
-                    next = nextA;
-                }
-                else if(usedElements.count(nextB) == 0 ){
-                    next = nextB;
-                }
-                else{
-                    throw CTiglError("CCPACSFuselage:GetCreatorGraph: unexpected graph");
-                }
-            }else {
+        if (fuselageGraph[current].size() == 1) {
+            next = fuselageGraph[current][0];
+            if (usedElements.count(next) != 0) {
+                next = ""; // end case
+            }
+        }
+        else if (fuselageGraph[current].size() == 2) {
+
+            nextA = fuselageGraph[current][0];
+            nextB = fuselageGraph[current][1];
+
+            if (usedElements.count(nextA) == 0) {
+                next = nextA;
+            }
+            else if (usedElements.count(nextB) == 0) {
+                next = nextB;
+            }
+            else {
                 throw CTiglError("CCPACSFuselage:GetCreatorGraph: unexpected graph");
             }
         }
-
-        return simpleGraph;
-    }
-
-
-    std::string CCPACSFuselage::GetNoiseUID()
-    {
-        std::string noise = "";
-        try {
-            std::vector<std::string> graph = GetCreatorGraph();
-            noise = graph[0];
-        }catch (const CTiglError & e) {
-            LOG(WARNING) << "CCPACSFuselage::GetNoiseUID: the creator graph throw an error, the start uid of the first "
-                            "segment will be returned instead of the creator standard noise.";
-            noise = GetSegment(1).GetStartSectionElementUID();
+        else {
+            throw CTiglError("CCPACSFuselage:GetCreatorGraph: unexpected graph");
         }
-        return noise;
-
     }
 
+    return simpleGraph;
+}
 
-
-    std::string CCPACSFuselage::GetTailUID()
-    {
-        std::string tail = "";
-        try {
-            std::vector<std::string> graph = GetCreatorGraph();
-            tail = graph[graph.size() - 1 ];
-        }catch (const CTiglError & e) {
-            LOG(WARNING) << "CCPACSFuselage::GetTail: the creator graph throw an error, the end uid of the last "
-                            "segment will be returned instead of the creator standard tail.";
-            int count = GetSegments().GetSegmentCount();
-            tail = GetSegment(count).GetEndSectionElementUID();
-        }
-        return tail;
-    }
-
-
-    double CCPACSFuselage::SetLengthBetween(const std::string& startElement, const std::string& endElement, double newPartialLength)
-    {
-
-
+std::string CCPACSFuselage::GetNoiseUID()
+{
+    std::string noise = "";
+    try {
         std::vector<std::string> graph = GetCreatorGraph();
+        noise                          = graph[0];
+    }
+    catch (const CTiglError& e) {
+        LOG(WARNING) << "CCPACSFuselage::GetNoiseUID: the creator graph throw an error, the start uid of the first "
+                        "segment will be returned instead of the creator standard noise.";
+        noise = GetSegment(1).GetStartSectionElementUID();
+    }
+    return noise;
+}
 
+std::string CCPACSFuselage::GetTailUID()
+{
+    std::string tail = "";
+    try {
+        std::vector<std::string> graph = GetCreatorGraph();
+        tail                           = graph[graph.size() - 1];
+    }
+    catch (const CTiglError& e) {
+        LOG(WARNING) << "CCPACSFuselage::GetTail: the creator graph throw an error, the end uid of the last "
+                        "segment will be returned instead of the creator standard tail.";
+        int count = GetSegments().GetSegmentCount();
+        tail      = GetSegment(count).GetEndSectionElementUID();
+    }
+    return tail;
+}
 
+double CCPACSFuselage::SetLengthBetween(const std::string& startElement, const std::string& endElement,
+                                        double newPartialLength)
+{
 
-        /*
+    std::vector<std::string> graph = GetCreatorGraph();
+
+    /*
          * Divide the elements in 3 categories:
          * 1) Elements before start that need not to be modified
          * 2) Elements between that need to create the partial length
          * 3) Elements after end that need to be shifted has the last between element
          */
-        std::vector<std::string> elementsBetween; // contain the start and the end
-        std::vector<std::string> elementsBefore;
-        std::vector<std::string> elementsAfter;
+    std::vector<std::string> elementsBetween; // contain the start and the end
+    std::vector<std::string> elementsBefore;
+    std::vector<std::string> elementsAfter;
 
+    bool afterStart = false;
+    bool afterEnd   = false;
 
-        bool afterStart = false;
-        bool afterEnd = false;
-
-        std::vector<std::string>::iterator it;
-        for ( int i = 0; i < graph.size() ; i++){
-            if ( graph[i] == startElement){
-                afterStart = true;
-                elementsBetween.push_back(graph[i]);
-            }
-            else if ( graph[i] == endElement){
-                afterEnd = true;
-                elementsBetween.push_back(graph[i]);
-            }
-            else if (afterStart == true && afterEnd == false){
-                elementsBetween.push_back(graph[i]);
-            }
-            else if (afterStart == false && afterEnd == false){
-                elementsBefore.push_back(graph[i]);
-            }
-            else if (afterStart == true && afterEnd== true){
-                elementsAfter.push_back(graph[i]);
-            }
+    std::vector<std::string>::iterator it;
+    for (int i = 0; i < graph.size(); i++) {
+        if (graph[i] == startElement) {
+            afterStart = true;
+            elementsBetween.push_back(graph[i]);
         }
-
-        if(elementsBetween.size() < 2 ){
-            throw CTiglError("CCPACSFuselage::SetLengthBetween: impossible to get the start and the end correctly");
+        else if (graph[i] == endElement) {
+            afterEnd = true;
+            elementsBetween.push_back(graph[i]);
         }
+        else if (afterStart == true && afterEnd == false) {
+            elementsBetween.push_back(graph[i]);
+        }
+        else if (afterStart == false && afterEnd == false) {
+            elementsBefore.push_back(graph[i]);
+        }
+        else if (afterStart == true && afterEnd == true) {
+            elementsAfter.push_back(graph[i]);
+        }
+    }
 
+    if (elementsBetween.size() < 2) {
+        throw CTiglError("CCPACSFuselage::SetLengthBetween: impossible to get the start and the end correctly");
+    }
 
-        /*
+    /*
          * BETWEEN ELEMENT SCALING
          *
          * This part follow basically these steps:
@@ -893,158 +882,146 @@ TopoDS_Shape transformFuselageProfileGeometry(const CTiglTransformation& fuselTr
          *
          */
 
+    std::map<std::string, CTiglPoint> oldCenterPoints;
+    std::map<std::string, CTiglPoint> oldGlobalOrigin;
+    std::map<std::string, CTiglPoint> newCenterPoints;
+    std::map<std::string, CTiglPoint> newGlobalOrigin;
 
-        std::map<std::string, CTiglPoint> oldCenterPoints;
-        std::map<std::string, CTiglPoint> oldGlobalOrigin;
-        std::map<std::string, CTiglPoint> newCenterPoints;
-        std::map<std::string, CTiglPoint> newGlobalOrigin;
+    // Get fuselage point in world coordinate
+    oldCenterPoints   = GetElementsCenters();
+    CTiglPoint startP = oldCenterPoints[startElement];
+    CTiglPoint endP   = oldCenterPoints[endElement];
 
-        // Get fuselage point in world coordinate
-        oldCenterPoints = GetElementsCenters();
-        CTiglPoint startP = oldCenterPoints[startElement];
-        CTiglPoint endP = oldCenterPoints[endElement];
+    // bring StartP to Origin
+    CTiglTransformation startToO;
+    startToO.SetIdentity();
+    startToO.AddTranslation(-startP.x, -startP.y, -startP.y);
 
+    startP = startToO * startP;
+    endP   = startToO * endP;
 
-        // bring StartP to Origin
-        CTiglTransformation startToO ;
-        startToO.SetIdentity();
-        startToO.AddTranslation( -startP.x, -startP.y, -startP.y);
+    // bring endP on the x axis // TODO
+    //    Eigen::Quaterniond q;
+    //    Eigen::Vector4d endPOnXaxis;
+    //    endPOnXaxis << endP.norm(),0,0,1;
+    //    q.setFromTwoVectors(endP.block<3,1>(0,0), endPOnXaxis.block<3,1>(0,0) );
+    //    Eigen::Matrix3d rotEndPToX =  q.toRotationMatrix();
+    //    Eigen::Matrix4d rotEndToX4d =  Eigen::Matrix4d::Identity();
+    //    rotEndToX4d.block<3,3>(0,0) = rotEndPToX;
 
-        startP = startToO * startP;
-        endP = startToO *endP;
+    CTiglTransformation rotEndToX4d;
+    rotEndToX4d.SetIdentity();
+    endP = rotEndToX4d * endP;
 
-        // bring endP on the x axis // TODO
-//    Eigen::Quaterniond q;
-//    Eigen::Vector4d endPOnXaxis;
-//    endPOnXaxis << endP.norm(),0,0,1;
-//    q.setFromTwoVectors(endP.block<3,1>(0,0), endPOnXaxis.block<3,1>(0,0) );
-//    Eigen::Matrix3d rotEndPToX =  q.toRotationMatrix();
-//    Eigen::Matrix4d rotEndToX4d =  Eigen::Matrix4d::Identity();
-//    rotEndToX4d.block<3,3>(0,0) = rotEndPToX;
+    double oldPartialLength = GetLengthBetween(startElement, endElement);
 
-        CTiglTransformation rotEndToX4d ;
-        rotEndToX4d.SetIdentity();
-        endP = rotEndToX4d * endP;
+    // Compute the needed scaling in x
+    if (oldPartialLength == 0) {
+        throw CTiglError("CCPACSFuselage::SetLengthBetween: the old length is 0, impossible to scale the length");
+    }
 
-        double oldPartialLength = GetLengthBetween(startElement, endElement);
+    double xScale = newPartialLength / oldPartialLength;
+    CTiglTransformation scaleM;
+    scaleM.SetIdentity();
+    scaleM.AddScaling(xScale, 1.0, 1.0);
 
-        // Compute the needed scaling in x
-        if(oldPartialLength == 0 ){
-            throw CTiglError("CCPACSFuselage::SetLengthBetween: the old length is 0, impossible to scale the length");
-        }
+    CTiglTransformation startToOI    = startToO.Inverted();
+    CTiglTransformation rotEndToX4dI = rotEndToX4d.Inverted();
 
-        double xScale = newPartialLength / oldPartialLength;
-        CTiglTransformation scaleM;
-        scaleM.SetIdentity();
-        scaleM.AddScaling(xScale,1.0,1.0);
+    // Get the origin of each element
+    CTiglPoint origin(0, 0, 0);
 
+    for (std::string elementUID : graph) {
+        oldGlobalOrigin[elementUID] = GetGlobalTransformation(elementUID) * origin;
+    }
 
-        CTiglTransformation startToOI = startToO.Inverted();
-        CTiglTransformation rotEndToX4dI = rotEndToX4d.Inverted();
+    // Compute the new center point and the new origin of each element in Between
+    CTiglTransformation totalTransformation = startToOI * rotEndToX4dI * scaleM * rotEndToX4d * startToO;
+    CTiglPoint tempDelatOtoP;
+    for (int i = 0; i < elementsBetween.size(); i++) {
+        newCenterPoints[elementsBetween[i]] = totalTransformation * oldCenterPoints[elementsBetween[i]];
+        tempDelatOtoP                       = oldCenterPoints[elementsBetween[i]] - oldGlobalOrigin[elementsBetween[i]];
+        // delta between origin and the center point will not change because no scaling or rotation will be changed
+        newGlobalOrigin[elementsBetween[i]] = newCenterPoints[elementsBetween[i]] - tempDelatOtoP;
+    }
 
+    // Compute the new transformation element of each element to be placed at the wanted orgin
+    CTiglTransformation tempNewTransformationE;
+    for (int i = 0; i < elementsBetween.size(); i++) {
+        tempNewTransformationE =
+            GetTransformToPlaceElementByTranslationAt(elementsBetween[i], newGlobalOrigin[elementsBetween[i]]);
+        CCPACSFuselageSectionElement& element =
+            GetUIDManager().ResolveObject<CCPACSFuselageSectionElement>(elementsBetween[i]);
+        CCPACSTransformation& storedTransformation = element.GetTransformation();
+        storedTransformation.setTransformationMatrix(tempNewTransformationE); // TODO:  need to work
+        // element.WriteCPACS( ) // TODO: how can we write
+    }
 
-        // Get the origin of each element
-        CTiglPoint origin(0,0,0);
-
-        for(std::string elementUID : graph) {
-            oldGlobalOrigin[elementUID] = GetGlobalTransformation(elementUID) * origin;
-        }
-
-        // Compute the new center point and the new origin of each element in Between
-        CTiglTransformation totalTransformation = startToOI * rotEndToX4dI * scaleM * rotEndToX4d * startToO  ;
-        CTiglPoint tempDelatOtoP;
-        for( int i = 0; i < elementsBetween.size(); i++){
-            newCenterPoints[elementsBetween[i]] = totalTransformation * oldCenterPoints[elementsBetween[i]];
-            tempDelatOtoP = oldCenterPoints[elementsBetween[i]] - oldGlobalOrigin[elementsBetween[i]];
-            // delta between origin and the center point will not change because no scaling or rotation will be changed
-            newGlobalOrigin[elementsBetween[i]] =  newCenterPoints[elementsBetween[i]] - tempDelatOtoP;
-        }
-
-
-        // Compute the new transformation element of each element to be placed at the wanted orgin
-        CTiglTransformation tempNewTransformationE;
-        for( int i = 0; i < elementsBetween.size(); i++){
-            tempNewTransformationE = GetTransformToPlaceElementByTranslationAt(elementsBetween[i], newGlobalOrigin[elementsBetween[i]] );
-            CCPACSFuselageSectionElement& element = GetUIDManager().ResolveObject<CCPACSFuselageSectionElement>(elementsBetween[i]);
-            CCPACSTransformation& storedTransformation = element.GetTransformation();
-            storedTransformation.setTransformationMatrix(tempNewTransformationE); // TODO:  need to work
-            // element.WriteCPACS( ) // TODO: how can we write
-
-        }
-
-
-        /*
+    /*
          * SHIFT THE END OF THE FUSELAGE
         */
 
-        CTiglPoint shiftEndElement =  newGlobalOrigin[endElement] - oldGlobalOrigin[endElement] ;
+    CTiglPoint shiftEndElement = newGlobalOrigin[endElement] - oldGlobalOrigin[endElement];
 
-        CTiglTransformation shiftM ;
-        shiftM.SetIdentity();
-        shiftM.AddTranslation(shiftEndElement.x, shiftEndElement.y, shiftEndElement.z);
+    CTiglTransformation shiftM;
+    shiftM.SetIdentity();
+    shiftM.AddTranslation(shiftEndElement.x, shiftEndElement.y, shiftEndElement.z);
 
-        std::vector<CTiglTransformation> chain;
-        CTiglTransformation newE ;
-        for( int i = 0; i < elementsAfter.size(); i++){
+    std::vector<CTiglTransformation> chain;
+    CTiglTransformation newE;
+    for (int i = 0; i < elementsAfter.size(); i++) {
 
-            /*
+        /*
              * G' = T F P S E  where the is the shift
              * G' = F P S E'
              * -> E' =  S^-1 P^-1 F^-1 G'
              * -> E' = S^-1 P^-1 W^-1 T W P S E
              */
-            chain = GetTransformationChain(elementsAfter[i]);
-            newE = chain[1].Inverted() * chain[2].Inverted() * chain[3].Inverted()
-                   * shiftM * chain[3] * chain[2] *chain[1] * chain[0];
-            CCPACSFuselageSectionElement& element = GetUIDManager().ResolveObject<CCPACSFuselageSectionElement>(elementsAfter[i]);
-            CCPACSTransformation& storedTransformation = element.GetTransformation();
-            storedTransformation.setTransformationMatrix(tempNewTransformationE); // TODO:  need to work
-            // element.WriteCPACS( ) // TODO: how can we write
-
-        }
+        chain = GetTransformationChain(elementsAfter[i]);
+        newE  = chain[1].Inverted() * chain[2].Inverted() * chain[3].Inverted() * shiftM * chain[3] * chain[2] *
+               chain[1] * chain[0];
+        CCPACSFuselageSectionElement& element =
+            GetUIDManager().ResolveObject<CCPACSFuselageSectionElement>(elementsAfter[i]);
+        CCPACSTransformation& storedTransformation = element.GetTransformation();
+        storedTransformation.setTransformationMatrix(tempNewTransformationE); // TODO:  need to work
+        // element.WriteCPACS( ) // TODO: how can we write
     }
+}
 
-
-    std::vector<CTiglTransformation> CCPACSFuselage::GetTransformationChain(const std::string& elementUID)
-    {
-        std::vector<CTiglTransformation> result ;
-        CCPACSFuselageSectionElement& element = GetUIDManager().ResolveObject<CCPACSFuselageSectionElement>(elementUID);
-        CTiglTransformation elementT = element.GetSectionElementTransformation();
-        CCPACSFuselageSection* section = element.GetParent()->GetParent();
-        CTiglTransformation sectionT = section->GetSectionTransformation();
-        CTiglTransformation positioningT;
-        positioningT.SetIdentity();
-        boost::optional<CTiglTransformation> positioningOp = GetPositioningTransformation(section->GetUID());
-        if( positioningOp ){
-            positioningT = positioningOp.get();
-        }
-        CTiglTransformation fuselageT = GetTransformationMatrix();
-        result.push_back(elementT);
-        result.push_back(sectionT);
-        result.push_back(positioningT);
-        result.push_back(fuselageT);
-
-        return result;
+std::vector<CTiglTransformation> CCPACSFuselage::GetTransformationChain(const std::string& elementUID)
+{
+    std::vector<CTiglTransformation> result;
+    CCPACSFuselageSectionElement& element = GetUIDManager().ResolveObject<CCPACSFuselageSectionElement>(elementUID);
+    CTiglTransformation elementT          = element.GetSectionElementTransformation();
+    CCPACSFuselageSection* section        = element.GetParent()->GetParent();
+    CTiglTransformation sectionT          = section->GetSectionTransformation();
+    CTiglTransformation positioningT;
+    positioningT.SetIdentity();
+    boost::optional<CTiglTransformation> positioningOp = GetPositioningTransformation(section->GetUID());
+    if (positioningOp) {
+        positioningT = positioningOp.get();
     }
+    CTiglTransformation fuselageT = GetTransformationMatrix();
+    result.push_back(elementT);
+    result.push_back(sectionT);
+    result.push_back(positioningT);
+    result.push_back(fuselageT);
 
+    return result;
+}
 
+CTiglTransformation CCPACSFuselage::GetGlobalTransformation(const std::string& elementUID)
+{
+    std::vector<CTiglTransformation> chain = GetTransformationChain(elementUID);
+    CTiglTransformation global             = chain[3] * chain[2] * chain[1] * chain[0];
+    return global;
+}
 
-    CTiglTransformation CCPACSFuselage::GetGlobalTransformation(const std::string& elementUID)
-    {
-        std::vector<CTiglTransformation> chain = GetTransformationChain(elementUID);
-        CTiglTransformation global = chain[3] * chain[2] * chain[1] * chain[0];
-        return global;
+CTiglTransformation CCPACSFuselage::GetTransformToPlaceElementByTranslationAt(const std::string& elementUID,
+                                                                              const CTiglPoint& wantedOriginP)
+{
 
-    }
-
-
-
-
-    CTiglTransformation CCPACSFuselage::GetTransformToPlaceElementByTranslationAt(const std::string &elementUID,
-                                                                                  const CTiglPoint &wantedOriginP) {
-
-
-        /* We search a new E' such that:
+    /* We search a new E' such that:
          * w = F*P*S*E'*0  (At start the origin is at 0,0,0)
          * S^-1 * P^-1 * F ^-1 w = E'0
          * A w = E'0
@@ -1056,32 +1033,28 @@ TopoDS_Shape transformFuselageProfileGeometry(const CTiglTransformation& fuselTr
          *
          */
 
-        std::vector<CTiglTransformation> chain = GetTransformationChain(elementUID);
+    std::vector<CTiglTransformation> chain = GetTransformationChain(elementUID);
 
-        CTiglTransformation a = chain[1].Inverted() * chain[2].Inverted() * chain[3].Inverted();
-        CTiglPoint wp = a * wantedOriginP;
+    CTiglTransformation a = chain[1].Inverted() * chain[2].Inverted() * chain[3].Inverted();
+    CTiglPoint wp         = a * wantedOriginP;
 
-        CTiglTransformation ep = chain[0];
+    CTiglTransformation ep = chain[0];
 
-        ep.SetValue(0,3,0);
-        ep.SetValue(1,3,0);
-        ep.SetValue(2,3,0);
-        ep.SetValue(3,3,1);
+    ep.SetValue(0, 3, 0);
+    ep.SetValue(1, 3, 0);
+    ep.SetValue(2, 3, 0);
+    ep.SetValue(3, 3, 1);
 
-        ep.AddTranslation(wp.x, wp.y, wp.z);
+    ep.AddTranslation(wp.x, wp.y, wp.z);
 
-        // check if it is correct
-        CTiglPoint o(0,0,0);
-        CTiglPoint check = chain[3] * chain[2]* chain[1] * ep * 0;
+    // check if it is correct
+    CTiglPoint o(0, 0, 0);
+    CTiglPoint check = chain[3] * chain[2] * chain[1] * ep * 0;
 
-        if( ! check.distance2(wantedOriginP) > 0.001 ){
-            throw CTiglError("CCPACSFuselage::GetTransformToPlaceElementByTranslationAt: Something go wrong!");
-        }
-        return ep;
+    if (!check.distance2(wantedOriginP) > 0.001) {
+        throw CTiglError("CCPACSFuselage::GetTransformToPlaceElementByTranslationAt: Something go wrong!");
     }
-
-
-
-
+    return ep;
+}
 
 } // end namespace tigl
