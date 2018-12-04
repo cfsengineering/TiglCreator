@@ -93,6 +93,14 @@ public:
     // the point is the start point of the profile wire, for zeta = 1.0 the last profile wire point.
     TIGL_EXPORT gp_Pnt GetPoint(int segmentIndex, double eta, double zeta);
 
+    // Gets the total length of this fuselage
+    TIGL_EXPORT double GetLength();
+
+    // Gets the length between the two fuselage elements given as arguments
+    TIGL_EXPORT double GetLengthBetween(const std::string& startElementUID, const std::string& endElementUID );
+
+    TIGL_EXPORT double SetLengthBetween(const std::string& startElementUID, const std::string& endElementUID, double newPartialLength);
+
     // Gets the volume of this fuselage
     TIGL_EXPORT double GetVolume();
 
@@ -139,6 +147,36 @@ protected:
     PNamedShape BuildLoft() const OVERRIDE;
 
     void SetFaceTraits(PNamedShape loft) const;
+
+
+    // Return the the centers of each CPCACS elements contains in the fuselage in the form <UID, CTiglPoint>
+    std::map< std::string , CTiglPoint > GetElementsCenters();
+
+    // Get the UID of the elements contains in the fuselage in the creator order
+    std::vector<std::string> GetCreatorGraph();
+
+    // Return the uid of the noise according the creator definition
+    std::string GetNoiseUID();
+
+    // Return the uid of the tail according the creator definition
+    std::string GetTailUID();
+
+    // Retrun the global transformation apply on this particular element.
+    // This means that the transformation of element, positionings, section and fuselage are correctly combine togheter
+    CTiglTransformation GetGlobalTransformation(const std::string& elementUID);
+
+    // Return the transformation chain that is applied on the given element
+    // The return vector contains the CTiglTransformation in the following order:
+    //         * [0] Element transformation
+    //         * [1] Section transformation
+    //         * [2] Positioning transformation
+    //         * [3] Wing transformation
+    std::vector<CTiglTransformation> GetTransformationChain(const std::string& elementUID);
+
+    // Return the transformation that the element should have to have its origin at the given point
+    CTiglTransformation GetTransformToPlaceElementByTranslationAt(const std::string &elementUID, const CTiglPoint &wantedOriginP);
+
+
 
 private:
     // get short name for loft
