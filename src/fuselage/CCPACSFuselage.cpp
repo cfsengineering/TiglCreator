@@ -815,7 +815,15 @@ std::string CCPACSFuselage::GetTailUID()
     return tail;
 }
 
-double CCPACSFuselage::SetLengthBetween(const std::string& startElement, const std::string& endElement,
+void CCPACSFuselage::SetLength(double newLength){
+    std::string noise = GetNoiseUID();
+    std::string tail = GetTailUID();
+    SetLengthBetween(noise, tail, newLength);
+}
+
+
+
+    void CCPACSFuselage::SetLengthBetween(const std::string& startElement, const std::string& endElement,
                                         double newPartialLength)
 {
 
@@ -930,9 +938,10 @@ double CCPACSFuselage::SetLengthBetween(const std::string& startElement, const s
 
     // Get the origin of each element
     CTiglPoint origin(0, 0, 0);
-
-    for (std::string elementUID : graph) {
-        oldGlobalOrigin[elementUID] = GetGlobalTransformation(elementUID) * origin;
+    CTiglTransformation global;
+    for (int i = 0; i < graph.size(); i++) {
+        global = GetGlobalTransformation(graph[i]);
+        oldGlobalOrigin[graph[i]] = global * origin;
     }
 
     // Compute the new center point and the new origin of each element in Between
@@ -953,13 +962,12 @@ double CCPACSFuselage::SetLengthBetween(const std::string& startElement, const s
         CCPACSFuselageSectionElement& element =
             GetUIDManager().ResolveObject<CCPACSFuselageSectionElement>(elementsBetween[i]);
         CCPACSTransformation& storedTransformation = element.GetTransformation();
-        storedTransformation.setTransformationMatrix(tempNewTransformationE); // TODO:  need to work
-        // element.WriteCPACS( ) // TODO: how can we write
+        storedTransformation.setTransformationMatrix(tempNewTransformationE);
     }
 
     /*
-         * SHIFT THE END OF THE FUSELAGE
-        */
+     * SHIFT THE END OF THE FUSELAGE
+    */
 
     CTiglPoint shiftEndElement = newGlobalOrigin[endElement] - oldGlobalOrigin[endElement];
 
@@ -983,9 +991,12 @@ double CCPACSFuselage::SetLengthBetween(const std::string& startElement, const s
         CCPACSFuselageSectionElement& element =
             GetUIDManager().ResolveObject<CCPACSFuselageSectionElement>(elementsAfter[i]);
         CCPACSTransformation& storedTransformation = element.GetTransformation();
-        storedTransformation.setTransformationMatrix(tempNewTransformationE); // TODO:  need to work
-        // element.WriteCPACS( ) // TODO: how can we write
+        storedTransformation.setTransformationMatrix(tempNewTransformationE);
     }
+
+    GetConfiguration().WriteCPACS(GetConfiguration().GetUID());
+    Invalidate(); // to force the rebuild of the loft?
+
 }
 
 std::vector<CTiglTransformation> CCPACSFuselage::GetTransformationChain(const std::string& elementUID)
@@ -1049,9 +1060,9 @@ CTiglTransformation CCPACSFuselage::GetTransformToPlaceElementByTranslationAt(co
 
     // check if it is correct
     CTiglPoint o(0, 0, 0);
-    CTiglPoint check = chain[3] * chain[2] * chain[1] * ep * 0;
+    CTiglPoint check = chain[3] * chain[2] * chain[1] * ep * o;
 
-    if (!check.distance2(wantedOriginP) > 0.001) {
+    if (check.distance2(wantedOriginP) > 0.001) {
         throw CTiglError("CCPACSFuselage::GetTransformToPlaceElementByTranslationAt: Something go wrong!");
     }
     return ep;

@@ -543,17 +543,12 @@ CTiglTransformation operator*(const CTiglTransformation & a, const CTiglTransfor
 CTiglPoint operator*(const CTiglTransformation& m, const CTiglPoint& p)
 {
 
-    double augmented_pnt[4];
-    augmented_pnt[0] = p.x;
-    augmented_pnt[1] = p.y;
-    augmented_pnt[2] = p.z;
-    augmented_pnt[1] = 1.0;
-    double res_matrix[4];
+    double augmented_pnt[4] = { p.x, p.y, p.z, 1.0};
+    double res_matrix[4] = {0.0, 0.0, 0.0, 0.0, };
 
-    int row;
-    for (row = 0; row < 4; row++) {
+    for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
-            res_matrix[row] += m.GetValue(row, col) * augmented_pnt[col];
+            res_matrix[row] +=  (m.GetValue(row, col) * augmented_pnt[col]) ;
         }
     }
 

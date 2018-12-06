@@ -99,7 +99,12 @@ public:
     // Gets the length between the two fuselage elements given as arguments
     TIGL_EXPORT double GetLengthBetween(const std::string& startElementUID, const std::string& endElementUID );
 
-    TIGL_EXPORT double SetLengthBetween(const std::string& startElementUID, const std::string& endElementUID, double newPartialLength);
+    // Sets the total length of this fuselage. (The noise keeps its position.)
+    TIGL_EXPORT void SetLength(double newLength);
+
+    // Set the length between this two elements.
+    // Elements that are after are shifted, element that are before remain unchanged
+    TIGL_EXPORT void SetLengthBetween(const std::string& startElementUID, const std::string& endElementUID, double newPartialLength);
 
     // Gets the volume of this fuselage
     TIGL_EXPORT double GetVolume();
