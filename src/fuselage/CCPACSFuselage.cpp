@@ -62,6 +62,8 @@
 #include <BRepProj_Projection.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 
+#include <math.h>       /* atan2 */
+
 
 namespace tigl
 {
@@ -823,7 +825,7 @@ void CCPACSFuselage::SetLength(double newLength){
 
 
 
-    void CCPACSFuselage::SetLengthBetween(const std::string& startElement, const std::string& endElement,
+void CCPACSFuselage::SetLengthBetween(const std::string& startElement, const std::string& endElement,
                                         double newPartialLength)
 {
 
@@ -903,22 +905,24 @@ void CCPACSFuselage::SetLength(double newLength){
     // bring StartP to Origin
     CTiglTransformation startToO;
     startToO.SetIdentity();
-    startToO.AddTranslation(-startP.x, -startP.y, -startP.y);
+    startToO.AddTranslation(-startP.x, -startP.y, -startP.z);
 
     startP = startToO * startP;
     endP   = startToO * endP;
 
-    // bring endP on the x axis // TODO
-    //    Eigen::Quaterniond q;
-    //    Eigen::Vector4d endPOnXaxis;
-    //    endPOnXaxis << endP.norm(),0,0,1;
-    //    q.setFromTwoVectors(endP.block<3,1>(0,0), endPOnXaxis.block<3,1>(0,0) );
-    //    Eigen::Matrix3d rotEndPToX =  q.toRotationMatrix();
-    //    Eigen::Matrix4d rotEndToX4d =  Eigen::Matrix4d::Identity();
-    //    rotEndToX4d.block<3,3>(0,0) = rotEndPToX;
 
+    // bring endP on the x axis
+    // We perform a extrinsic rotation in the order Z Y X, so it should be equivalent to the intrinsic cpacs rotation
+    // in the order X Y' Z''
     CTiglTransformation rotEndToX4d;
     rotEndToX4d.SetIdentity();
+    double rotGradZ = atan2(endP.y, endP.x);
+    double rotZ = CTiglTransformation::RadianToDegree(rotGradZ);
+    rotEndToX4d.AddRotationZ(-rotZ);
+    double rotGradY = atan2(endP.z, sqrt( (endP.x * endP.x)  + (endP.y * endP.y )));
+    double rotY = CTiglTransformation::RadianToDegree(rotY);
+    rotEndToX4d.AddRotationY(-rotY);
+
     endP = rotEndToX4d * endP;
 
     double oldPartialLength = GetLengthBetween(startElement, endElement);
@@ -1067,5 +1071,39 @@ CTiglTransformation CCPACSFuselage::GetTransformToPlaceElementByTranslationAt(co
     }
     return ep;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 } // end namespace tigl

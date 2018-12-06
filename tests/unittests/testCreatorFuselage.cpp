@@ -211,14 +211,13 @@ TEST(CreatorFuselage, setLengthBetween_MultipleFuselagesModel){
     EXPECT_NEAR(r, newPartialL, 0.0001);
 
     // TODO need to implement rotation part of the setLengthBetween
-    /*
+
     fuselageUID = "SimpleFuselage4";
     tigl::CCPACSFuselage& fuselage4 = fuselages.GetFuselage(fuselageUID);
     newPartialL = 5;
     fuselage4.SetLengthBetween("D150_Fuselage_4Section2IDElement1", "D150_Fuselage_4Section3IDElement1" , newPartialL);
     r = fuselage4.GetLengthBetween("D150_Fuselage_4Section2IDElement1", "D150_Fuselage_4Section3IDElement1");
     EXPECT_NEAR(r, newPartialL, 0.0001);
-    */
 
 
     ASSERT_EQ( SUCCESS, tixiSaveDocument(tixiHandle, "TestData/Output/multiple-fuselages-out.cpacs.xml" ) );
