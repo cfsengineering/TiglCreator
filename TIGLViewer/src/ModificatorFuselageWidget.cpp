@@ -3,16 +3,23 @@
 // Created by cfse on 9/26/18.
 //
 
-#include "TIGLViewerFuselageWidget.h"
+#include "ModificatorFuselageWidget.h"
 //#include "ModificatorManager.h"
 
-TIGLViewerFuselageWidget::TIGLViewerFuselageWidget(QWidget* parent)
+ModificatorFuselageWidget::ModificatorFuselageWidget(QWidget* parent)
     : ModificatorWidget(parent)
 {
 }
 
+
+
+void ModificatorFuselageWidget::setFuselage(tigl::CCPACSFuselage& fuselage) {
+    this->fuselage = &fuselage;
+}
+
+
 /*
-void TIGLViewerFuselageWidget::init(ModificatorManager * associate ) {
+void ModificatorFuselageWidget::init(ModificatorManager * associate ) {
     ModificatorWidget::init(associate);
 
     spinBoxLength = this->findChild<QDoubleSpinBox*>("spinBoxLength");
@@ -43,7 +50,7 @@ void TIGLViewerFuselageWidget::init(ModificatorManager * associate ) {
 
 
 // inverse the visibility
-void TIGLViewerFuselageWidget::expendLengthDetails(bool checked) {
+void ModificatorFuselageWidget::expendLengthDetails(bool checked) {
     widgetLengthDetails->setVisible(! (widgetLengthDetails->isVisible() ));
     if(widgetLengthDetails->isVisible()){
         // Reset the values to the file values, avoid modifying from details and main at the same time
@@ -64,7 +71,7 @@ void TIGLViewerFuselageWidget::expendLengthDetails(bool checked) {
 }
 
 
-void TIGLViewerFuselageWidget::setPartialLengthFromComboBoxes(){
+void ModificatorFuselageWidget::setPartialLengthFromComboBoxes(){
 
     QString uid1 = comboBoxLengthE1->currentText();
     QString uid2 = comboBoxLengthE2->currentText();
@@ -73,7 +80,7 @@ void TIGLViewerFuselageWidget::setPartialLengthFromComboBoxes(){
 
 }
 
-void TIGLViewerFuselageWidget::recomputeTotalLength(double newPartialLength){
+void ModificatorFuselageWidget::recomputeTotalLength(double newPartialLength){
 
     if( !( isApprox(newPartialLength, internalPartialLength) )){ // avoid diff between spin box implementation and double
         double diff = newPartialLength - internalPartialLength;
@@ -83,7 +90,7 @@ void TIGLViewerFuselageWidget::recomputeTotalLength(double newPartialLength){
 
 
 
-void TIGLViewerFuselageWidget::setCircumferenceFromRadius(double newRadius) {
+void ModificatorFuselageWidget::setCircumferenceFromRadius(double newRadius) {
     bool block = spinBoxCircumference->blockSignals(true); // to avoid infinite loop with setRadiusFromCircumference
     spinBoxCircumference->setValue(2.0* M_PI * newRadius);
     spinBoxCircumference->blockSignals(block);
@@ -91,7 +98,7 @@ void TIGLViewerFuselageWidget::setCircumferenceFromRadius(double newRadius) {
 }
 
 
-void TIGLViewerFuselageWidget::setRadiusFromCircumference(double newCircumference) {
+void ModificatorFuselageWidget::setRadiusFromCircumference(double newCircumference) {
     bool block = spinBoxRadius->blockSignals(true); // to avoid infinite loop with setCircumferenceFromRadius
     spinBoxRadius->setValue( newCircumference/ ( M_PI * 2.0));
     spinBoxRadius->blockSignals(block);
@@ -99,7 +106,7 @@ void TIGLViewerFuselageWidget::setRadiusFromCircumference(double newCircumferenc
 }
 
 
-void TIGLViewerFuselageWidget::setFuselage(cpcr::CPACSTreeItem *fuselageItem) {
+void ModificatorFuselageWidget::setFuselage(cpcr::CPACSTreeItem *fuselageItem) {
     this->fuselageItem = fuselageItem;
     internalLength = associateManager->adapter->getFuselageLength(fuselageItem);
     spinBoxLength->setValue(internalLength);
@@ -121,7 +128,7 @@ void TIGLViewerFuselageWidget::setFuselage(cpcr::CPACSTreeItem *fuselageItem) {
 
 }
 
-void TIGLViewerFuselageWidget::apply() {
+void ModificatorFuselageWidget::apply() {
    bool lengthHasChanged = ( (! isApprox(internalLength, spinBoxLength->value()) ) );
    bool partialLengthHasChanged = ( ! isApprox(internalPartialLength, spinBoxPartialLength->value() ) );
    bool isPartialCase = widgetLengthDetails->isVisible(); // if expend length details is shown, the details modifications prime on the main mofif
@@ -150,11 +157,11 @@ void TIGLViewerFuselageWidget::apply() {
 }
 
 
-void TIGLViewerFuselageWidget::reset() {
+void ModificatorFuselageWidget::reset() {
     if(fuselageItem != nullptr){
         this->setFuselage(this->fuselageItem);
     }else{
-        LOG(WARNING) << "TIGLViewerWingWidget: reset call but wing is not set!";
+        LOG(WARNING) << "ModificatorWingWidget: reset call but wing is not set!";
     }
 }
 

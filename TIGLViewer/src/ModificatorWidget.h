@@ -31,6 +31,11 @@ class ModificatorWidget : public QWidget
 
     Q_OBJECT
 
+signals:
+    void InternalStructureOfTixiHasChanged();
+
+
+
 public:
     ModificatorWidget(QWidget* parent = 0);
 

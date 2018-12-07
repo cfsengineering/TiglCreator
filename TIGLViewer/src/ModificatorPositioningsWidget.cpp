@@ -20,17 +20,17 @@
 // Created by cfse on 7/9/18.
 //
 
-#include "TIGLViewerPositioningsWidget.h"
+#include "ModificatorPositioningsWidget.h"
 //#include "ModificatorManager.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-TIGLViewerPositioningsWidget::TIGLViewerPositioningsWidget(QWidget* parent)
+ModificatorPositioningsWidget::ModificatorPositioningsWidget(QWidget* parent)
     : ModificatorWidget(parent)
 {
 }
 /*
-void TIGLViewerPositioningsWidget::init(ModificatorManager *associate) {
+void ModificatorPositioningsWidget::init(ModificatorManager *associate) {
     ModificatorWidget::init(associate);
 
 
@@ -60,7 +60,7 @@ void TIGLViewerPositioningsWidget::init(ModificatorManager *associate) {
 
 }
 
-void TIGLViewerPositioningsWidget::apply() {
+void ModificatorPositioningsWidget::apply() {
 
     int numberOfChange = 0;
     int i = 0;
@@ -90,7 +90,7 @@ void TIGLViewerPositioningsWidget::apply() {
 
 
 
-void TIGLViewerPositioningsWidget::setPositionings(cpcr::CPACSTreeItem *item) {
+void ModificatorPositioningsWidget::setPositionings(cpcr::CPACSTreeItem *item) {
 
     clean();
 
@@ -139,7 +139,7 @@ void TIGLViewerPositioningsWidget::setPositionings(cpcr::CPACSTreeItem *item) {
 }
 
 
-void TIGLViewerPositioningsWidget::clean() {
+void ModificatorPositioningsWidget::clean() {
 
     for(int i = 0; i < layoutPerPositioning.size(); i++){
 

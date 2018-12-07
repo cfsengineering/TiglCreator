@@ -33,13 +33,13 @@
 #include <QScrollArea>
 #include <QSpacerItem>
 
-class TIGLViewerPositioningsWidget : public ModificatorWidget
+class ModificatorPositioningsWidget : public ModificatorWidget
 {
 
     Q_OBJECT
 
 public:
-    TIGLViewerPositioningsWidget(QWidget* parent = 0);
+    ModificatorPositioningsWidget(QWidget* parent = 0);
     /*
     void init(ModificatorManager * associate ) override ;
     void apply() override ;

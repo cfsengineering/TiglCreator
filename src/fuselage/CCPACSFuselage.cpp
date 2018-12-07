@@ -984,11 +984,11 @@ void CCPACSFuselage::SetLengthBetween(const std::string& startElement, const std
     for (int i = 0; i < elementsAfter.size(); i++) {
 
         /*
-             * G' = T F P S E  where the is the shift
-             * G' = F P S E'
-             * -> E' =  S^-1 P^-1 F^-1 G'
-             * -> E' = S^-1 P^-1 W^-1 T W P S E
-             */
+         *  G' = T F P S E  where the is the shift
+         *  G' = F P S E'
+         *  -> E' =  S^-1 P^-1 F^-1 G'
+         *  -> E' = S^-1 P^-1 W^-1 T W P S E
+         */
         chain = GetTransformationChain(elementsAfter[i]);
         newE  = chain[1].Inverted() * chain[2].Inverted() * chain[3].Inverted() * shiftM * chain[3] * chain[2] *
                chain[1] * chain[0];
@@ -998,9 +998,11 @@ void CCPACSFuselage::SetLengthBetween(const std::string& startElement, const std
         storedTransformation.setTransformationMatrix(tempNewTransformationE);
     }
 
+
+    // UPDATE THE FUSELAGE STRUCTURE
+
     GetConfiguration().WriteCPACS(GetConfiguration().GetUID());
     Invalidate(); // to force the rebuild of the loft?
-
 }
 
 std::vector<CTiglTransformation> CCPACSFuselage::GetTransformationChain(const std::string& elementUID)

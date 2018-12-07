@@ -20,16 +20,16 @@
 // Created by makem on 30/05/18.
 //
 
-#include "TIGLViewerWingWidget.h"
+#include "ModificatorWingWidget.h"
 //#include "ModificatorManager.h"
 
-TIGLViewerWingWidget::TIGLViewerWingWidget(QWidget* parent)
+ModificatorWingWidget::ModificatorWingWidget(QWidget* parent)
     : ModificatorWidget(parent)
 {
 }
 /*
 
-void TIGLViewerWingWidget::init(ModificatorManager * associate ) {
+void ModificatorWingWidget::init(ModificatorManager * associate ) {
     ModificatorWidget::init(associate);
 
     // Retrieve component of the anchor interface
@@ -162,33 +162,33 @@ void TIGLViewerWingWidget::init(ModificatorManager * associate ) {
 }
 
 // inverse the visibility
-void TIGLViewerWingWidget::expendAreaDetails(bool checked) {
+void ModificatorWingWidget::expendAreaDetails(bool checked) {
     widgetAreaDetails->setVisible(! (widgetAreaDetails->isVisible() ));
 }
 
 
 // inverse the visibility
-void TIGLViewerWingWidget::expendDihedralDetails(bool checked) {
+void ModificatorWingWidget::expendDihedralDetails(bool checked) {
     widgetDihedralDetails->setVisible(! (widgetDihedralDetails->isVisible() ));
 }
 
 // inverse the visibility
-void TIGLViewerWingWidget::expendSweepDetails(bool checked) {
+void ModificatorWingWidget::expendSweepDetails(bool checked) {
     widgetSweepDetails->setVisible(! (widgetSweepDetails->isVisible() ));
 }
 
-void TIGLViewerWingWidget::expendAirfoilDetails(bool checked) {
+void ModificatorWingWidget::expendAirfoilDetails(bool checked) {
     widgetAirfoilDetails->setVisible( ! (widgetAirfoilDetails->isVisible()));
 }
 
-void TIGLViewerWingWidget::expendStandardizationDetails(bool checked) {
+void ModificatorWingWidget::expendStandardizationDetails(bool checked) {
     widgetStdDetails->setVisible( !(widgetStdDetails->isVisible()));
 }
 
 
 
 
-void TIGLViewerWingWidget::setAreaConstant(bool checked) {
+void ModificatorWingWidget::setAreaConstant(bool checked) {
     checkBoxIsARConstant->setChecked(false);
     spinBoxAR->setReadOnly(false);
     checkBoxIsSpanConstant->setChecked(false);
@@ -198,7 +198,7 @@ void TIGLViewerWingWidget::setAreaConstant(bool checked) {
 
 }
 
-void TIGLViewerWingWidget::setSpanConstant(bool checked) {
+void ModificatorWingWidget::setSpanConstant(bool checked) {
 
     checkBoxIsARConstant->setChecked(false);
     spinBoxAR->setReadOnly(false);
@@ -208,7 +208,7 @@ void TIGLViewerWingWidget::setSpanConstant(bool checked) {
     spinBoxSpan->setReadOnly(true);
 }
 
-void TIGLViewerWingWidget::setARConstant(bool checked) {
+void ModificatorWingWidget::setARConstant(bool checked) {
     checkBoxIsAreaConstant->setChecked(false);
     spinBoxAreaXY->setReadOnly(false);
     checkBoxIsSpanConstant->setChecked(false);
@@ -219,12 +219,12 @@ void TIGLViewerWingWidget::setARConstant(bool checked) {
 }
 
 
-void TIGLViewerWingWidget::checkStdAirfoils(bool checked) {
+void ModificatorWingWidget::checkStdAirfoils(bool checked) {
     checkBoxStdAirfoils->setChecked(internalStdAirfoils || checked);
     setStdComboBoxFromStdCheckBoxes();
 }
 
-void TIGLViewerWingWidget::checkStdSections(bool checked) {
+void ModificatorWingWidget::checkStdSections(bool checked) {
     checkBoxStdSections->setChecked(internalStdSections || checked);
     if( checked == false && internalStdSections == false && checkBoxStdPositionings->isChecked()){
         checkBoxStdPositionings->setChecked(false);     // we do no allow to have section not check an positioning checked
@@ -232,7 +232,7 @@ void TIGLViewerWingWidget::checkStdSections(bool checked) {
     setStdComboBoxFromStdCheckBoxes();
 }
 
-void TIGLViewerWingWidget::checkStdPositionings(bool checked) {
+void ModificatorWingWidget::checkStdPositionings(bool checked) {
     checkBoxStdPositionings->setChecked(internalStdPositionings || checked);
     if(! checkBoxStdSections->isChecked() && checked ){
         checkBoxStdSections->setChecked(checked);   // positioning requier section std
@@ -240,13 +240,13 @@ void TIGLViewerWingWidget::checkStdPositionings(bool checked) {
     setStdComboBoxFromStdCheckBoxes();
 }
 
-void TIGLViewerWingWidget::checkStdAnchor(bool checked) {
+void ModificatorWingWidget::checkStdAnchor(bool checked) {
     checkBoxStdAnchor->setChecked(internalStdAnchor || checked);
     setStdComboBoxFromStdCheckBoxes();
 }
 
 
-void TIGLViewerWingWidget::setStdCheckBoxesFromComboBox(int idx) {
+void ModificatorWingWidget::setStdCheckBoxesFromComboBox(int idx) {
     if(callFromSetStdComboBox) return; // we ignore the signal from "setStdComboBoxFromStdCheckBoxes" because it will overrie the correct value
 
     if( comboBoxStdGlobal->currentText() == "Total"){
@@ -264,7 +264,7 @@ void TIGLViewerWingWidget::setStdCheckBoxesFromComboBox(int idx) {
 
 }
 
-void TIGLViewerWingWidget::setStdComboBoxFromStdCheckBoxes() {
+void ModificatorWingWidget::setStdComboBoxFromStdCheckBoxes() {
 
     callFromSetStdComboBox = true;
     int stdCount = 0;
@@ -294,7 +294,7 @@ void TIGLViewerWingWidget::setStdComboBoxFromStdCheckBoxes() {
 
 
 
-void TIGLViewerWingWidget::setWing(cpcr::CPACSTreeItem *wing) {
+void ModificatorWingWidget::setWing(cpcr::CPACSTreeItem *wing) {
     wingItem = wing;
 
     // set anchor
@@ -379,17 +379,17 @@ void TIGLViewerWingWidget::setWing(cpcr::CPACSTreeItem *wing) {
 }
 
 
-void TIGLViewerWingWidget::reset() {
+void ModificatorWingWidget::reset() {
     if(wingItem != nullptr){
         this->setWing(this->wingItem);
     }else{
-        LOG(WARNING) << "TIGLViewerWingWidget: reset call but wing is not set!";
+        LOG(WARNING) << "ModificatorWingWidget: reset call but wing is not set!";
     }
 
 }
 
 
-void TIGLViewerWingWidget::apply() {
+void ModificatorWingWidget::apply() {
 
     bool anchorHasChanged = ( (!isApprox(internalAnchorX, spinBoxAnchorX->value()))
                               || (! isApprox(internalAnchorY, spinBoxAnchorY->value()))
@@ -461,7 +461,7 @@ void TIGLViewerWingWidget::apply() {
             associateManager->adapter->setWingAreaKeepAR(wingItem, internalAreaXY);
         }
         else {
-            LOG(ERROR) << "TIGLViewerWingWidget: set area called, but not correct constant checkbox set";
+            LOG(ERROR) << "ModificatorWingWidget: set area called, but not correct constant checkbox set";
         }
 
     }
@@ -476,7 +476,7 @@ void TIGLViewerWingWidget::apply() {
             associateManager->adapter->setWingSpanKeepAR(wingItem, internalSpan);
         }
         else {
-            LOG(ERROR) << "TIGLViewerWingWidget: set span called, but not correct constant checkbox set";
+            LOG(ERROR) << "ModificatorWingWidget: set span called, but not correct constant checkbox set";
         }
     }
 
@@ -489,7 +489,7 @@ void TIGLViewerWingWidget::apply() {
             associateManager->adapter->setWingARKeepSpan(wingItem, internalAR);
         }
         else {
-            LOG(ERROR) << "TIGLViewerWingWidget: set AR called, but not correct constant checkbox set";
+            LOG(ERROR) << "ModificatorWingWidget: set AR called, but not correct constant checkbox set";
         }
     }
 

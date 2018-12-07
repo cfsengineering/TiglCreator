@@ -31,6 +31,10 @@
 
 #include "ui_TIGLViewerWindow.h"
 
+#include "ModificatorManager.h"
+
+
+
 class QAction;
 class QLabel;
 class QMenu;
@@ -131,6 +135,10 @@ private:
     class TIGLViewerSettingsDialog * settingsDialog;
     class TIGLViewerSettings * tiglViewerSettings;
     class QTimer * openTimer;
+
+    ModificatorManager* modificatorManager;
+
+
 
 };
 

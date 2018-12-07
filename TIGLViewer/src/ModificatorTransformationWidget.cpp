@@ -20,24 +20,24 @@
 // Created by cfse on 3/21/18.
 //
 
-#include "TIGLViewerTransformationWidget.h"
+#include "ModificatorTransformationWidget.h"
 //#include "ModificatorManager.h"
 #include <iostream>
 
-TIGLViewerTransformationWidget::TIGLViewerTransformationWidget(QWidget *parent):
+ModificatorTransformationWidget::ModificatorTransformationWidget(QWidget *parent):
     ModificatorWidget(parent)
 {}
 
 /*
 
-void TIGLViewerTransformationWidget::apply() {
+void ModificatorTransformationWidget::apply() {
     setInternalFromSpinBoxes();
     associateManager->adapter->setTransformation(transformationItem, transformation);
     associateManager->adapter->writeToFile();
 }
 
 
-void TIGLViewerTransformationWidget::init(ModificatorManager* associate)
+void ModificatorTransformationWidget::init(ModificatorManager* associate)
 {
     ModificatorWidget::init(associate);
     boxSX = this->findChild<QDoubleSpinBox*>("spinBoxSX");
@@ -56,7 +56,7 @@ void TIGLViewerTransformationWidget::init(ModificatorManager* associate)
 }
 
 
-void TIGLViewerTransformationWidget::setTransformation(cpcr::CPACSTreeItem* item) {
+void ModificatorTransformationWidget::setTransformation(cpcr::CPACSTreeItem* item) {
 
     this->transformationItem = item;
     transformation = this->associateManager->adapter->getTransformation(transformationItem);
@@ -65,7 +65,7 @@ void TIGLViewerTransformationWidget::setTransformation(cpcr::CPACSTreeItem* item
 
 
 
-void TIGLViewerTransformationWidget::setSpinBoxesFromInternal()
+void ModificatorTransformationWidget::setSpinBoxesFromInternal()
 {
     boxSX->setValue(transformation.getScaling().x);
     boxSY->setValue(transformation.getScaling().y);
@@ -82,7 +82,7 @@ void TIGLViewerTransformationWidget::setSpinBoxesFromInternal()
 }
 
 
-void TIGLViewerTransformationWidget::setInternalFromSpinBoxes()
+void ModificatorTransformationWidget::setInternalFromSpinBoxes()
 {
     transformation.setScaling( cpcr::Point( boxSX->value(), boxSY->value(), boxSZ->value()) );
     transformation.setRotation(cpcr::Point (boxRX->value(), boxRY->value(), boxRZ->value() ));
@@ -92,7 +92,7 @@ void TIGLViewerTransformationWidget::setInternalFromSpinBoxes()
 
 
 
-void TIGLViewerTransformationWidget::keyPressEvent(QKeyEvent *event)
+void ModificatorTransformationWidget::keyPressEvent(QKeyEvent *event)
 {
     std::cout << "event->key(): "  << std::endl;
     setInternalFromSpinBoxes();

@@ -28,12 +28,12 @@
 //#include "CPACSCreatorLib/Point.h"
 #include <QDoubleSpinBox>
 
-class TIGLViewerTransformationWidget : public ModificatorWidget
+class ModificatorTransformationWidget : public ModificatorWidget
 {
     Q_OBJECT
 
 public:
-    TIGLViewerTransformationWidget(QWidget* parent = 0);
+    ModificatorTransformationWidget(QWidget* parent = 0);
 
     /*
     // Initialize the linked objects

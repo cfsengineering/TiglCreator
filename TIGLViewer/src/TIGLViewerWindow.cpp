@@ -124,6 +124,13 @@ TIGLViewerWindow::TIGLViewerWindow()
     statusBar()->showMessage(tr("A context menu is available by right-clicking"));
 
     setMinimumSize(160, 160);
+
+    modificatorManager = new ModificatorManager(    treeView,
+                                                    transforamtionModificator,
+                                                    wingModificator,
+                                                    positioningsModificator,
+                                                    fuselageModificator );
+
 }
 
 TIGLViewerWindow::~TIGLViewerWindow()
@@ -287,6 +294,8 @@ void TIGLViewerWindow::openFile(const QString& fileName)
             }
             delete cpacsConfiguration;
             cpacsConfiguration = config;
+
+            modificatorManager->setCPACSConfiguration(&(cpacsConfiguration->GetConfiguration()));
             
             connectConfiguration();
             updateMenus();

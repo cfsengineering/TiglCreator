@@ -108,12 +108,19 @@ set(tv_src
     TIGLGeometryChoserDialog.cpp
     # files for CPACSCreator
     ModificatorWidget.cpp
-    TIGLViewerFuselageWidget.cpp
-    TIGLViewerPositioningsWidget.cpp
-    TIGLViewerTransformationWidget.cpp
-    TIGLViewerWingWidget.cpp
+    ModificatorFuselageWidget.cpp
+    ModificatorPositioningsWidget.cpp
+    ModificatorTransformationWidget.cpp
+    ModificatorWingWidget.cpp
+    ModificatorManager.cpp
+    CPACSTreeView.cpp
+    CPACSAbstractModel.cpp
+    CPACSTreeItem.cpp
+    CPACSTree.cpp
+    UniqueXPath.cpp
+    TIGLViewerException.cpp
 
-)
+        )
 	
 # normal header files
 set(tv_hdr
@@ -130,7 +137,12 @@ set(tv_hdr
     TIGLViewerLoggerHTMLDecorator.h
     TIGLViewerScopedCommand.h
     TIGLQAspectWindow.h
-)
+    # files for CPACSCreator
+    CPACSTreeItem.h
+    CPACSTree.h
+    UniqueXPath.h
+    TIGLViewerException.h
+        )
 
 # qobject header files that have to be moced
 set(tv_hdr_qobj
@@ -159,10 +171,14 @@ set(tv_hdr_qobj
 	TIGLGeometryChoserDialog.h
     # files for CPACSCreator
     ModificatorWidget.h
-    TIGLViewerFuselageWidget.h
-    TIGLViewerPositioningsWidget.h
-    TIGLViewerTransformationWidget.h
-    TIGLViewerWingWidget.h
+    ModificatorFuselageWidget.h
+    ModificatorPositioningsWidget.h
+    ModificatorTransformationWidget.h
+    ModificatorWingWidget.h
+    ModificatorManager.h
+    CPACSAbstractModel.h
+    CPACSTreeView.h
+
 )
 
 set(tv_ui_comp

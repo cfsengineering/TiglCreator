@@ -30,7 +30,7 @@
 //#include "CPACSCreatorLib/CPACSTreeItem.h"
 #include "QCheckBox"
 
-class TIGLViewerWingWidget : public ModificatorWidget
+class ModificatorWingWidget : public ModificatorWidget
 {
 
     Q_OBJECT
@@ -56,7 +56,7 @@ public slots:
 
 */
 public:
-    TIGLViewerWingWidget(QWidget* parent = 0);
+    ModificatorWingWidget(QWidget* parent = 0);
     /*
     void init(ModificatorManager * associate ) override ;
     void apply() override ;

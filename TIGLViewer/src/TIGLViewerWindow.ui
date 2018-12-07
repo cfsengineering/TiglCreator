@@ -383,7 +383,7 @@
       </widget>
      </item>
      <item>
-      <widget class="TIGLViewerWingWidget" name="wingModificator" native="true">
+      <widget class="ModificatorWingWidget" name="wingModificator" native="true">
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
          <layout class="QHBoxLayout" name="anchorLayout">
@@ -1402,7 +1402,7 @@
       </widget>
      </item>
      <item>
-      <widget class="TIGLViewerFuselageWidget" name="fuselageModificator" native="true">
+      <widget class="ModificatorFuselageWidget" name="fuselageModificator" native="true">
        <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
          <layout class="QVBoxLayout" name="lengthLayout">
@@ -1588,7 +1588,7 @@
       </widget>
      </item>
      <item>
-      <widget class="TIGLViewerTransformationWidget" name="transforamtionModificator" native="true">
+      <widget class="ModificatorTransformationWidget" name="transforamtionModificator" native="true">
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
          <layout class="QVBoxLayout" name="transformationLayout">
@@ -1885,7 +1885,7 @@
       </widget>
      </item>
      <item>
-      <widget class="TIGLViewerPositioningsWidget" name="positioningsModificator" native="true">
+      <widget class="ModificatorPositioningsWidget" name="positioningsModificator" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -3128,27 +3128,27 @@
    <header>TiglViewerConsole.h</header>
   </customwidget>
   <customwidget>
-   <class>TIGLViewerTransformationWidget</class>
+   <class>ModificatorTransformationWidget</class>
    <extends>QWidget</extends>
-   <header>TIGLViewerTransformationWidget.h</header>
+   <header>ModificatorTransformationWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>TIGLViewerWingWidget</class>
+   <class>ModificatorWingWidget</class>
    <extends>QWidget</extends>
-   <header>TIGLViewerWingWidget.h</header>
+   <header>ModificatorWingWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>TIGLViewerPositioningsWidget</class>
+   <class>ModificatorPositioningsWidget</class>
    <extends>QWidget</extends>
-   <header>TIGLViewerPositioningsWidget.h</header>
+   <header>ModificatorPositioningsWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>TIGLViewerFuselageWidget</class>
+   <class>ModificatorFuselageWidget</class>
    <extends>QWidget</extends>
-   <header>TIGLViewerFuselageWidget.h</header>
+   <header>ModificatorFuselageWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
