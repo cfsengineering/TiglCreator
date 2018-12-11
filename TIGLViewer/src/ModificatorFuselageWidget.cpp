@@ -44,8 +44,6 @@ void ModificatorFuselageWidget::setFuselage(tigl::CCPACSFuselage& newFuselage) {
 
 void ModificatorFuselageWidget::init() {
 
-    ModificatorWidget::init(nullptr);
-
     spinBoxLength = this->findChild<QDoubleSpinBox*>("spinBoxLength");
     widgetLengthDetails = this->findChild<QWidget*>("widgetLengthDetails");
     btnExpendLengthDetails =  this->findChild<QPushButton*>("btnExpendLengthDetails");

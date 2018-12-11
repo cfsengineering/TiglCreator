@@ -31,6 +31,12 @@
 #include "CPACSTreeItem.h"
 
 
+/**
+ * Adapter class to display a CPACSTree using QTreeView.
+ *
+ * @author Malo Drougard
+ *
+ */
 class CPACSAbstractModel: public QAbstractItemModel {
 
 Q_OBJECT

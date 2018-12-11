@@ -22,7 +22,6 @@
 #ifndef CPACSCREATORLIBANDTESTS_CPACSTREE_H
 #define CPACSCREATORLIBANDTESTS_CPACSTREE_H
 
-
 #include <string>
 #include <vector>
 #include <memory>
@@ -30,69 +29,74 @@
 #include "CPACSTreeItem.h"
 #include <tixi.h>
 
+namespace cpcr
+{
 
+typedef std::string UID;
 
-
-namespace  cpcr {
-
-    typedef std::string UID;
-
-
-    /**
+/**
      * @brief Construct and manage a tree structure over CPACS file.
      *
-     * The xml CPACS format can be represented as a tree. This class create for each xml node starting from the given
-     * root a CPACSTreeItem. The access to the underlying file is managed by the TIXI library. So basically, this class
-     * is a a tree structure that represent the a given xml file from a given root. Remark, that the root need not to
-     * be the first element of the CPACS, but can be every where, typically the the "modelType" of CPACS can be chosen.
+     * The xml CPACS format can be represented as a tree. This class create for each xml node a CPACSTreeItem starting
+     * from the given root. The access to the underlying data is done by the TIXI library. So basically, this class
+     * is a a tree structure that represent a subset of the Tixi data.
+     * @remark The root need not to be the first element of the CPACS, but can be every where, typically the
+     * "modelType" of CPACS can be chosen.
+     *
+     * @author Malo Drougard
      */
-    class CPACSTree {
+class CPACSTree
+{
 
-    public:
+public:
+    CPACSTree();
+    ~CPACSTree();
 
-        CPACSTree();
-        ~CPACSTree();
+    virtual void build(TixiDocumentHandle handle, UniqueXPath root);
+    inline bool isBuild()
+    {
+        return m_isBuild;
+    }
 
-        virtual void build(TixiDocumentHandle handle, UniqueXPath root);
-        inline bool isBuild(){return m_isBuild;}
+    inline CPACSTreeItem* getRoot() const
+    {
+        return m_root;
+    }
 
-        inline CPACSTreeItem * getRoot() const  {return m_root;}
+    /**
+     * Delete all the CPACSTreeItem used by the tree and set the root to nullptr
+     * @remark if another object still used some of the CPACSTreeItem it can leads to segmentation fault.
+     */
+    void clean();
 
-        void clean();
+    /**
+    * Rebuild the tree from the same handle with the same root ;
+    */
+    void reload();
 
-        /**
-         * ReBuild the tree from the same handle with the same root ;
-         */
-        void reload();
+protected:
+    /*
+     * Helper function to retrieve the uid of an element using the internal tixi handle
+    */
+    std::string getUid(UniqueXPath target, std::string defaultRetrunedValue = "");
 
-    protected:
+    /*
+    * Helper function to retrieve the number of children of an element using the internal tixi handle
+    */
+    int getNumberOfChildren(UniqueXPath xpathObj);
 
-        /*
-         * Helper function to retrieve the uid of an element using the internal tixi handle
-         */
-        std::string getUid(UniqueXPath target, std::string defaultRetrunedValue = "") ;
+    void createChildrenRecursively(CPACSTreeItem& parent);
 
+    TixiDocumentHandle tixiHandle;
 
-        /*
-         * Helper function to retrieve the number of children of an element using the internal tixi handle
-         */
-        int getNumberOfChildren(UniqueXPath xpathObj);
+    // The xpath in cpacs file of the root element
+    // We can start the tree where ever we want
+    UniqueXPath rootXPath;
 
-        void createChildrenRecursively(CPACSTreeItem& parent);
+    CPACSTreeItem* m_root;
 
-
-
-
-        TixiDocumentHandle  tixiHandle;
-
-        // The xpath in cpacs file of the root element
-        // We can start the tree where ever we want
-        UniqueXPath rootXPath;
-
-        CPACSTreeItem*  m_root;
-
-        bool m_isBuild;
-    };
+    bool m_isBuild;
+};
 }
 
 #endif //CPACSCREATORLIBANDTESTS_CPACSTREE_H

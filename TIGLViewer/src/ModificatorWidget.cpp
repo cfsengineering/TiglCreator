@@ -26,12 +26,7 @@
 ModificatorWidget::ModificatorWidget(QWidget* parent)
     : QWidget(parent)
 {
-}
-
-
-void ModificatorWidget::init(ModificatorManager *associate) {
-    this->associateManager = associate;
-    precision = 3;
+    precision = 3; // by default the precision is 10^-3
 }
 
 void ModificatorWidget::apply()

@@ -20,7 +20,7 @@
 //
 
 /**
- * @brief Structure element to hold the CPACS tree
+ * @brief CPACSTree node element
  * @author Malo Drougard
  */
 

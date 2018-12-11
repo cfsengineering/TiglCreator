@@ -33,7 +33,26 @@
 
 #include <QPushButton>
 
-
+/**
+ * @brief Main class to articulate the modification interface.
+ *
+ * This class holds four main components:
+ * CCPACSConfiguration: that is the main tigl object to work with a cpacs configuration
+ * CPACSTreeView: that is the main tree interface.
+ * Different ModificatorWidgets: that are the interfaces for particular tigl object.
+ * ApllyWidget: that hold the commit and cancel buttons
+ *
+ * To work with this class, first we need to set the CCPACSConfiguration. The CPACSTreeView will be updated and the
+ * correct tree build and displayed.
+ * Once the CPACSConfiguration is set, it will wait for a "newSelectedTreeItem" signal. If a "newSelectedTreeItem" signal
+ * is emit, the "dispatch" function will be called. The dispatch function will look at the new selected element and if the
+ * element has a associate ModificatorWidget, it will set this particular ModificatorWidget and display it.
+ * Then if the user, click on the "apply" function, the modificator manager will apply the change onto the
+ * CPACSConfiguration though the ModificatorWidget.
+ *
+ * @author Malo Drougard
+ *
+ */
 class ModificatorManager: public QObject {
     Q_OBJECT
 
@@ -43,7 +62,7 @@ signals:
     void configurationEdited();
 
 public slots:
-    void dispatch(cpcr::CPACSTreeItem* item ) ; // we use pass the CPACSTreeItem by value to not have delete element during the modif
+    void dispatch(cpcr::CPACSTreeItem* item ) ;
     void applyCurrentModifications();
     // simply reset the values displayed by the current modificator from the file
     void applyCurrentCancellation();

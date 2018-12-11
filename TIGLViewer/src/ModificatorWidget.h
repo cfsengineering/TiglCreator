@@ -24,23 +24,28 @@
 
 #include <QWidget>
 
-class ModificatorManager; // forward delcaration
 
+
+/**
+ * Abstract class for modificator widget.
+ * A Modificator widget set the interface for a particular cpacs element.
+ * For example the wing modificator widget will hold the high level interface to modify the wing.
+ * Each modificator widgets will hold a Tigl object as the CCPACSWing, it retrieve its information and diplay it.
+ * Each modificator widgets need to implement an "apply" function that will that the values from its GUI and set it into
+ * the tigl object.
+ * Each modificator widgets need to implement an "reset" function that will retrieve the data from its tigl object and
+ * display it in its GUI.
+ * @remark The function to set the tigl object need to be implemented in the derivative class.
+ *
+ */
 class ModificatorWidget : public QWidget
 {
 
     Q_OBJECT
 
-signals:
-    void InternalStructureOfTixiHasChanged();
-
-
 
 public:
     ModificatorWidget(QWidget* parent = 0);
-
-    // init the associate manager and the coorespendance between GUI interface and the object
-    virtual void init(ModificatorManager * associate);
 
     // reset the dispay value from the value of cpacs file (called when cancel button is pressed)
     virtual void reset();
@@ -52,10 +57,16 @@ public:
 
 protected:
     double precision;
-    // return true if the abs(a-b) < precision
+
+    /**
+     * Helper function to evaluate if a change occurs.
+     * The values stored by the GUI can have some rounding.
+     * @param a
+     * @param b
+     * @return true if the abs(a-b) < precision
+     */
     bool isApprox(double a, double b);
 
-    ModificatorManager * associateManager;
 };
 
 #endif // TIGL_MODIFICATORWIDGET_H
