@@ -141,6 +141,10 @@ public:
     TIGL_EXPORT TopoDS_Wire projectConic(TopoDS_Shape wireOrEdge, gp_Pnt origin) const;
     TIGL_EXPORT TopoDS_Wire projectParallel(TopoDS_Shape wireOrEdge, gp_Dir direction) const;
 
+
+    // Get the UID of the elements contains in the fuselage in the creator order
+    std::vector<std::string> GetCreatorGraph();
+
 protected:
     void BuildGuideCurves(TopoDS_Compound& cache) const;
 
@@ -156,9 +160,6 @@ protected:
 
     // Return the the centers of each CPCACS elements contains in the fuselage in the form <UID, CTiglPoint>
     std::map<std::string, CTiglPoint> GetElementsCenters();
-
-    // Get the UID of the elements contains in the fuselage in the creator order
-    std::vector<std::string> GetCreatorGraph();
 
     // Return the uid of the noise according the creator definition
     std::string GetNoiseUID();

@@ -28,12 +28,12 @@ ModificatorWidget::ModificatorWidget(QWidget* parent)
 {
 }
 
-/*
+
 void ModificatorWidget::init(ModificatorManager *associate) {
     this->associateManager = associate;
     precision = 3;
 }
-*/
+
 void ModificatorWidget::apply()
 {
     LOG(WARNING) << "ModificatorWidget: apply function should be overwrite in children classes";

@@ -64,8 +64,7 @@ namespace
 
 TIGLViewerWindow::TIGLViewerWindow()
     : myLastFolder(tr(""))
-    , cpacsConfiguration(NULL)
-{
+    , cpacsConfiguration(NULL) {
     setupUi(this);
 
     setTiglWindowTitle(QString("TiGL Viewer %1").arg(TIGL_MAJOR_VERSION));
@@ -73,7 +72,7 @@ TIGLViewerWindow::TIGLViewerWindow()
     tiglViewerSettings = &TIGLViewerSettings::Instance();
     settingsDialog = new TIGLViewerSettingsDialog(*tiglViewerSettings, this);
 
-    myScene  = new TIGLViewerContext();
+    myScene = new TIGLViewerContext();
     myOCC->setContext(myScene);
 
     // we create a timer to workaround QFileSystemWatcher bug,
@@ -89,8 +88,8 @@ TIGLViewerWindow::TIGLViewerWindow()
 
     //redirect everything to TIGL console, let error messages be printed in red
     stdoutStream = new QDebugStream(std::cout);
-    errorStream  = new QDebugStream(std::cerr);
-    errorStream->setMarkup("<b><font color=\"red\">","</font></b>");
+    errorStream = new QDebugStream(std::cerr);
+    errorStream->setMarkup("<b><font color=\"red\">", "</font></b>");
 
     // insert two loggers, one for the log history and one for the console
     CSharedPtr<tigl::CTiglLogSplitter> splitter(new tigl::CTiglLogSplitter);
@@ -112,7 +111,7 @@ TIGLViewerWindow::TIGLViewerWindow()
 
     //cpacsConfiguration = new TIGLViewerDocument(this);
     scriptEngine = new TIGLScriptEngine(this);
-    
+
     setAcceptDrops(true);
 
     connectSignals();
@@ -125,13 +124,18 @@ TIGLViewerWindow::TIGLViewerWindow()
 
     setMinimumSize(160, 160);
 
-    modificatorManager = new ModificatorManager(    treeView,
-                                                    transforamtionModificator,
-                                                    wingModificator,
-                                                    positioningsModificator,
-                                                    fuselageModificator );
+    fuselageModificator->init();
+    modificatorManager = new ModificatorManager(treeView,
+                                                widgetApply,
+                                                transforamtionModificator,
+                                                wingModificator,
+                                                positioningsModificator,
+                                                fuselageModificator);
 
+    // modificatorManager will emit a configurationEdited when he modifie the tigl configuration
+    connect(modificatorManager, SIGNAL(configurationEdited()), this, SLOT(updateScene()));
 }
+
 
 TIGLViewerWindow::~TIGLViewerWindow()
 {
@@ -240,6 +244,7 @@ void TIGLViewerWindow::openScript(const QString& fileName)
 
 void TIGLViewerWindow::closeConfiguration()
 {
+    modificatorManager->setCPACSConfiguration(nullptr); // it will also reset the treeview
     if (cpacsConfiguration) {
         getScene()->deleteAllObjects();
         delete cpacsConfiguration;
@@ -913,6 +918,16 @@ void TIGLViewerWindow::drawVector()
     stream << "(" << point.X() << ", " << point.Y() << ", " << point.Z() << ")";
     getScene()->displayVector(point, dir, stream.str().c_str(), Standard_True, 0,0,0, 1.);
 }
+
+
+
+void TIGLViewerWindow::updateScene() {
+    myScene->deleteAllObjects();
+    cpacsConfiguration->drawConfiguration();
+}
+
+
+
 
 /// This function is copied from QtCoreLib (>5.1)
 /// and is not available in qt4

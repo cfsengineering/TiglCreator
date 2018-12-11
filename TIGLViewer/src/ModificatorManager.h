@@ -38,6 +38,10 @@ class ModificatorManager: public QObject {
     Q_OBJECT
 
 
+
+signals:
+    void configurationEdited();
+
 public slots:
     void dispatch(cpcr::CPACSTreeItem* item ) ; // we use pass the CPACSTreeItem by value to not have delete element during the modif
     void applyCurrentModifications();
@@ -46,7 +50,7 @@ public slots:
 
 public:
     ModificatorManager( QTreeView* qView,
-                        //QWidget* applyInterface,
+                        QWidget* applyInterface,
                         ModificatorTransformationWidget* transformationModificator,
                         ModificatorWingWidget* wingModificator,
                         ModificatorPositioningsWidget* positioningsModificator,
@@ -68,6 +72,12 @@ public:
 
     //inline ProfilesDBManager* getProfilesDB() {return profilesDB; }
 
+
+protected:
+
+    inline bool configurationIsSet() {return (config != nullptr); }
+
+
 private:
 
     tigl::CCPACSConfiguration* config ;
@@ -78,13 +88,14 @@ private:
     ModificatorTransformationWidget* transformationModificator;
     ModificatorWingWidget* wingModificator;
     ModificatorPositioningsWidget* positioningsModificator;
-
     ModificatorFuselageWidget * fuselageModificator;
 
     ModificatorWidget* currentModificator;
-    //QWidget* widgetApply;
-    //QPushButton* commitButton;
-    //QPushButton* cancelButton;
+
+    // cancel/apply interface
+    QWidget* widgetApply;
+    QPushButton* commitButton;
+    QPushButton* cancelButton;
 
     //bool useCpacsStandard;
 

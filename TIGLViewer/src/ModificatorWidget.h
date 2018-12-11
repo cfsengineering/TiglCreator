@@ -24,7 +24,7 @@
 
 #include <QWidget>
 
-// class ModificatorManager; // forward delcaration
+class ModificatorManager; // forward delcaration
 
 class ModificatorWidget : public QWidget
 {
@@ -40,7 +40,7 @@ public:
     ModificatorWidget(QWidget* parent = 0);
 
     // init the associate manager and the coorespendance between GUI interface and the object
-    //    virtual void init(ModificatorManager * associate);
+    virtual void init(ModificatorManager * associate);
 
     // reset the dispay value from the value of cpacs file (called when cancel button is pressed)
     virtual void reset();
@@ -55,7 +55,7 @@ protected:
     // return true if the abs(a-b) < precision
     bool isApprox(double a, double b);
 
-    //    ModificatorManager * associateManager;
+    ModificatorManager * associateManager;
 };
 
 #endif // TIGL_MODIFICATORWIDGET_H

@@ -83,6 +83,9 @@ public slots:
     TIGLViewerContext*  getScene() { return myScene; }
     TIGLViewerDocument* getDocument() { return cpacsConfiguration; }
 
+    //update function for modificator
+    void updateScene();
+
 private slots:
     void updateMenus();
     void newFile();
@@ -105,6 +108,8 @@ private slots:
     void makeScreenShot();
     void drawPoint();
     void drawVector();
+
+
 
 private:
     void connectSignals();

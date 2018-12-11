@@ -22,115 +22,130 @@
 #include "ModificatorManager.h"
 #include "CTiglUIDManager.h"
 
+ModificatorManager::ModificatorManager(QTreeView* qView, QWidget* applyInterface,
+                                       ModificatorTransformationWidget* transformationModificator,
+                                       ModificatorWingWidget* wingModificator,
+                                       ModificatorPositioningsWidget* positioningsModificator,
+                                       ModificatorFuselageWidget* fuselageModificator)
+{
 
-ModificatorManager::ModificatorManager( QTreeView* qView,
-                                        //QWidget *applyInterface,
-                                        ModificatorTransformationWidget* transformationModificator,
-                                        ModificatorWingWidget* wingModificator,
-                                        ModificatorPositioningsWidget* positioningsModificator,
-                                        ModificatorFuselageWidget *fuselageModificator) {
-
-
+    config          = nullptr;
     treeViewManager = new CPACSTreeView(qView);
 
-    //this->widgetApply = widgetApply;
-    //this->commitButton = widgetApply->findChild<QPushButton*>("commitButton");
-    //this->cancelButton = widgetApply->findChild<QPushButton*>("cancelButton");
+    this->widgetApply  = applyInterface;
+    this->commitButton = widgetApply->findChild<QPushButton*>("commitButton");
+    this->cancelButton = widgetApply->findChild<QPushButton*>("cancelButton");
 
     this->transformationModificator = transformationModificator;
-    this->wingModificator = wingModificator;
-    this->positioningsModificator = positioningsModificator;
-    this->fuselageModificator = fuselageModificator; // we use pointer for modificator widget because they are define in the GUI
-    //this->fuselageModificator->init(this); needed?
+    this->wingModificator           = wingModificator;
+    this->positioningsModificator   = positioningsModificator;
+    this->fuselageModificator =
+        fuselageModificator; // we use pointer for modificator widget because they are define in the GUI
     currentModificator = nullptr;
-    this->config = nullptr;
+    this->config       = nullptr;
 
     this->hideAll();
 
-    connect(treeViewManager, SIGNAL( newSelectedTreeItem(cpcr::CPACSTreeItem *)), this, SLOT(dispatch(cpcr::CPACSTreeItem*)));
+    connect(treeViewManager, SIGNAL(newSelectedTreeItem(cpcr::CPACSTreeItem*)), this,
+            SLOT(dispatch(cpcr::CPACSTreeItem*)));
 
+    connect(commitButton, SIGNAL(pressed()), this, SLOT(applyCurrentModifications()));
+
+    connect(cancelButton, SIGNAL(pressed()), this, SLOT(applyCurrentCancellation()));
 }
 
-
-void ModificatorManager::setCPACSConfiguration(tigl::CCPACSConfiguration *newConfig) {
+void ModificatorManager::setCPACSConfiguration(tigl::CCPACSConfiguration* newConfig)
+{
     this->config = newConfig;
-    cpcr::UniqueXPath rootXPath("/cpacs/vehicles/aircraft/model[1]"); //TODO
-    treeViewManager->displayNewTree(newConfig->GetTixiDocumentHandle(), rootXPath );
+    if (configurationIsSet()) {
+        cpcr::UniqueXPath rootXPath("/cpacs/vehicles/aircraft/model[1]"); //TODO
+        treeViewManager->displayNewTree(newConfig->GetTixiDocumentHandle(), rootXPath);
+        currentModificator = nullptr;
+        hideAll();
+    }
+    else {
+        currentModificator = nullptr;
+        hideAll();
+        treeViewManager->clear();
 
+    }
 }
 
+void ModificatorManager::applyCurrentModifications()
+{
 
-
-void ModificatorManager::applyCurrentModifications(){
-
-    if(currentModificator != nullptr) {
+    if (currentModificator != nullptr) {
         currentModificator->apply();
-//        if (useCpacsStandard){
-//            adapter->standardize();
-//        }
-    }else{
-        LOG(WARNING) << "ModificatorManager::applyCurrentModifications: current modificator is null" <<std::endl;
+
+        //        if (useCpacsStandard){
+        //            adapter->standardize();
+        //        }
+        emit configurationEdited();
+    }
+    else {
+        LOG(WARNING) << "ModificatorManager::applyCurrentModifications: current modificator is null" << std::endl;
     }
 }
 
-
-
-void ModificatorManager::applyCurrentCancellation() {
-    if(currentModificator != nullptr){
+void ModificatorManager::applyCurrentCancellation()
+{
+    if (currentModificator != nullptr) {
         currentModificator->reset();
-    }else{
-        LOG(WARNING) << "ModificatorManager::applyCurrentCancellation: current modificator is null" <<std::endl;
+    }
+    else {
+        LOG(WARNING) << "ModificatorManager::applyCurrentCancellation: current modificator is null" << std::endl;
     }
 }
 
+void ModificatorManager::dispatch(cpcr::CPACSTreeItem* item)
+{
 
-void ModificatorManager::dispatch(cpcr::CPACSTreeItem* item ) {
-
-
-    if( ! item->isInitialized()) {
-        LOG(ERROR) << "MODIFICATOR MANAGER GET A NULL ITEM";
+    if ((!configurationIsSet()) || (!item->isInitialized())) {
+        currentModificator = nullptr;
+        hideAll();
+        LOG(ERROR) << "MODIFICATOR MANAGER IS NOT READY";
     }
-    else if(item->getType() == "transformation"){
+    else if (item->getType() == "transformation") {
         //currentModificator = transformationModificator;
         //this->setTransformationModificator(item);
     }
-    else if(item->getType() == "wing"){
+    else if (item->getType() == "wing") {
         //currentModificator = wingModificator;
         //this->setWingModificator(item);
     }
-    else if (item->getType() == "positionings"){
+    else if (item->getType() == "positionings") {
         //currentModificator = positioningsModificator;
         //this->setPositioningsModificator(item);
     }
-    else if (item->getType() == "fuselage"){
+    else if (item->getType() == "fuselage") {
         currentModificator = fuselageModificator;
         this->setFuselageModificator(item);
     }
     else {
         currentModificator = nullptr;
         hideAll();
-        LOG(INFO) <<  "MODIFICATOR MANAGER: item not suported";
+        LOG(INFO) << "MODIFICATOR MANAGER: item not suported";
     }
 }
 
-
-void ModificatorManager::hideAll() {
+void ModificatorManager::hideAll()
+{
     bool visible = false;
     transformationModificator->setVisible(visible);
     wingModificator->setVisible(visible);
     positioningsModificator->setVisible(visible);
     fuselageModificator->setVisible(visible);
-    //widgetApply->setVisible(visible);
-
+    widgetApply->setVisible(visible);
 }
 
-void ModificatorManager::setFuselageModificator(cpcr::CPACSTreeItem* item) {
+void ModificatorManager::setFuselageModificator(cpcr::CPACSTreeItem* item)
+{
     hideAll();
     tigl::CTiglUIDManager& uidManager = config->GetUIDManager();
-    tigl::CCPACSFuselage& fuselage = uidManager.ResolveObject<tigl::CCPACSFuselage>(item->getUid());
+    tigl::CCPACSFuselage& fuselage    = uidManager.ResolveObject<tigl::CCPACSFuselage>(item->getUid());
     fuselageModificator->setFuselage(fuselage);
     fuselageModificator->setVisible(true);
-    //widgetApply->setVisible(true);
+    widgetApply->setVisible(true);
 }
 
 /*

@@ -2,12 +2,12 @@
 // Created by cfse on 9/26/18.
 //
 
-#ifndef TIGL_TIGLVIEWERFUSELAGEWIDGET_H
-#define TIGL_TIGLVIEWERFUSELAGEWIDGET_H
+#ifndef TIGL_MODIFICATORFUSELAGEWIDGET_H
+#define TIGL_MODIFICATORFUSELAGEWIDGET_H
 
 #include "ModificatorWidget.h"
 #include "CCPACSFuselage.h"
-//#include "CPACSCreatorLib/CPACSTreeItem.h"
+#include "CPACSTreeItem.h"
 #include <QDoubleSpinBox>
 #include <QPushButton>
 #include <QComboBox>
@@ -16,7 +16,7 @@ class ModificatorFuselageWidget : public ModificatorWidget
 {
 
     Q_OBJECT
-    /*
+
 public slots:
 
     void expendLengthDetails(bool checked);
@@ -25,51 +25,43 @@ public slots:
     // If a new partial length is set it will recompute the the global length
     void recomputeTotalLength(double newPartialLength);
 
-    void setCircumferenceFromRadius(double newRadius);
-    void setRadiusFromCircumference(double newCircumference);
-*/
+    //void setCircumferenceFromRadius(double newRadius);
+    //void setRadiusFromCircumference(double newCircumference);
+
+
 
 public:
     ModificatorFuselageWidget(QWidget* parent = 0);
 
-
     void setFuselage(tigl::CCPACSFuselage& fuselage);
 
-    /*
-       // Initialize the linked objects
-       void init(ModificatorManager* associate) override ;
+    // Initialize the linked objects
+    void init();
 
-       void apply() override ;
-       void reset() override ;
+    void apply() override;
 
+    void reset() override;
 
+private:
 
-   private:
+    // Length parameters
+    QDoubleSpinBox* spinBoxLength;
+    QPushButton* btnExpendLengthDetails;
+    QWidget* widgetLengthDetails;
+    QComboBox* comboBoxLengthE1;
+    QComboBox* comboBoxLengthE2;
+    QDoubleSpinBox* spinBoxPartialLength;
 
-       cpcr::CPACSTreeItem * fuselageItem;
+    // Internal length parameters
+    double internalLength;
+    double internalPartialLength;
 
-       // Length parameters
-       QDoubleSpinBox* spinBoxLength;
-       QPushButton*  btnExpendLengthDetails;
-       QWidget* widgetLengthDetails;
-       QComboBox* comboBoxLengthE1;
-       QComboBox* comboBoxLengthE2;
-       QDoubleSpinBox* spinBoxPartialLength;
+    // Circumference parameters:
+    QDoubleSpinBox* spinBoxCircumference;
+    QDoubleSpinBox* spinBoxRadius;
 
-       // Internal length parameters
-       double internalLength;
-       double internalPartialLength;
-
-
-       // Circumference parameters:
-       QDoubleSpinBox* spinBoxCircumference;
-       QDoubleSpinBox* spinBoxRadius;
-
-       // Internal circumference parameters:
-       double internalCircumference;
-
-
-   */
+    // Internal circumference parameters:
+    double internalCircumference;
 
 private:
     tigl::CCPACSFuselage* fuselage;

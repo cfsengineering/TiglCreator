@@ -920,7 +920,7 @@ void CCPACSFuselage::SetLengthBetween(const std::string& startElement, const std
     double rotZ = CTiglTransformation::RadianToDegree(rotGradZ);
     rotEndToX4d.AddRotationZ(-rotZ);
     double rotGradY = atan2(endP.z, sqrt( (endP.x * endP.x)  + (endP.y * endP.y )));
-    double rotY = CTiglTransformation::RadianToDegree(rotY);
+    double rotY = CTiglTransformation::RadianToDegree(rotGradY);
     rotEndToX4d.AddRotationY(-rotY);
 
     endP = rotEndToX4d * endP;

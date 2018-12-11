@@ -215,7 +215,7 @@ void CPACSAbstractModel::resetInternalTree( cpcr::CPACSTree* newTree ) {
 
 
 void CPACSAbstractModel::disconnectInternalTree() {
-    // notify the tree view?
+    // notify the tree view? yes I think so
     QAbstractItemModel::beginResetModel();
     tree = nullptr;
     QAbstractItemModel::endResetModel();
