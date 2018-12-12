@@ -12,163 +12,149 @@
 
 #include <string.h>
 
-TEST(CreatorFuselage, getLength_SimpleModel)
-{
-    const char* filename = "TestData/simpletest.cpacs.xml";
+
+
+class TestCreatorFuselage: public  ::testing::Test {
+
+protected:
+    std::string filename = "";
 
     TiglCPACSConfigurationHandle tiglHandle = -1;
     TixiDocumentHandle tixiHandle           = -1;
 
-    ASSERT_EQ(SUCCESS, tixiOpenDocument(filename, &tixiHandle));
-    ASSERT_EQ(TIGL_SUCCESS, tiglOpenCPACSConfiguration(tixiHandle, "", &tiglHandle));
+    tigl::CCPACSConfigurationManager* manager = nullptr;
+    tigl::CCPACSConfiguration* config = nullptr;
+    tigl::CCPACSFuselage* fuselage = nullptr;
 
-    tigl::CCPACSConfigurationManager& manager = tigl::CCPACSConfigurationManager::GetInstance();
-    tigl::CCPACSConfiguration& config         = manager.GetConfiguration(tiglHandle);
+    void setVariables(std::string inFilename, int inFuselageIdx){
+        unsetVariables();
+        filename = inFilename;
+        ASSERT_EQ(SUCCESS, tixiOpenDocument(filename.c_str(), &tixiHandle));
+        ASSERT_EQ(TIGL_SUCCESS, tiglOpenCPACSConfiguration(tixiHandle, "", &tiglHandle));
+        manager = &(tigl::CCPACSConfigurationManager::GetInstance());
+        config         = &(manager->GetConfiguration(tiglHandle));
+        fuselage = &(config->GetFuselage(inFuselageIdx)) ;
+    }
 
-    tigl::CCPACSFuselage& fuselage = config.GetFuselage(1);
-    double length                  = fuselage.GetLength();
+    void setVariables(std::string inFilename, std::string inFuselageUID){
+        unsetVariables();
+        filename = inFilename;
+        ASSERT_EQ(SUCCESS, tixiOpenDocument(filename.c_str(), &tixiHandle));
+        ASSERT_EQ(TIGL_SUCCESS, tiglOpenCPACSConfiguration(tixiHandle, "", &tiglHandle));
+        manager = &(tigl::CCPACSConfigurationManager::GetInstance());
+        config         = &(manager->GetConfiguration(tiglHandle));
+        tigl::CCPACSFuselages& fuselages = config->GetFuselages();
+        fuselage = &(fuselages.GetFuselage(inFuselageUID));
 
+    }
+
+
+    void unsetVariables(){
+        filename = "";
+
+        if(tiglHandle > -1){
+            tiglCloseCPACSConfiguration(tiglHandle);
+        }
+        if(tixiHandle > -1 ){
+            tixiCloseDocument(tixiHandle);
+        }
+
+        tiglHandle = -1;
+        tiglHandle = -1;
+
+        manager = nullptr;
+        config = nullptr;
+        fuselage = nullptr;
+    }
+
+    void TearDown(){
+       unsetVariables();
+    }
+
+};
+
+
+
+
+
+
+TEST_F(TestCreatorFuselage, getLength_SimpleModel)
+{
+    setVariables("TestData/simpletest.cpacs.xml", 1);
+
+    double length                  = fuselage->GetLength();
     ASSERT_NEAR(2, length, 0.0001);
 
-    tiglCloseCPACSConfiguration(tiglHandle);
-    tixiCloseDocument(tixiHandle);
 }
 
-TEST(CreatorFuselage, getLength_BoxWingModel)
+TEST_F(TestCreatorFuselage, getLength_BoxWingModel)
 {
-    const char* filename = "TestData/boxWing.xml";
+    setVariables("TestData/boxWing.xml", 1);
 
-    TiglCPACSConfigurationHandle tiglHandle = -1;
-    TixiDocumentHandle tixiHandle           = -1;
-
-    ASSERT_EQ(SUCCESS, tixiOpenDocument(filename, &tixiHandle));
-    ASSERT_EQ(TIGL_SUCCESS, tiglOpenCPACSConfiguration(tixiHandle, "", &tiglHandle));
-
-    tigl::CCPACSConfigurationManager& manager = tigl::CCPACSConfigurationManager::GetInstance();
-    tigl::CCPACSConfiguration& config         = manager.GetConfiguration(tiglHandle);
-
-    tigl::CCPACSFuselage& fuselage = config.GetFuselage(1);
-    double length                  = fuselage.GetLength();
-
+    double length                  = fuselage->GetLength();
     ASSERT_NEAR(37, length, 2);
-
-    tiglCloseCPACSConfiguration(tiglHandle);
-    tixiCloseDocument(tixiHandle);
 }
 
-TEST(CreatorFuselage, getLength_CrmWingModel)
+
+TEST_F(TestCreatorFuselage, getLength_CrmWingModel)
 {
-    const char* filename = "TestData/crm.xml";
+    setVariables("TestData/crm.xml", 1);
 
-    TiglCPACSConfigurationHandle tiglHandle = -1;
-    TixiDocumentHandle tixiHandle           = -1;
-
-    ASSERT_EQ(SUCCESS, tixiOpenDocument(filename, &tixiHandle));
-    ASSERT_EQ(TIGL_SUCCESS, tiglOpenCPACSConfiguration(tixiHandle, "", &tiglHandle));
-
-    tigl::CCPACSConfigurationManager& manager = tigl::CCPACSConfigurationManager::GetInstance();
-    tigl::CCPACSConfiguration& config         = manager.GetConfiguration(tiglHandle);
-
-    tigl::CCPACSFuselage& fuselage = config.GetFuselage(1);
-    double length                  = fuselage.GetLength();
-
+    double length                  = fuselage->GetLength();
     ASSERT_NEAR(61, length, 2);
-
-    tiglCloseCPACSConfiguration(tiglHandle);
-    tixiCloseDocument(tixiHandle);
 }
 
 
-TEST(CreatorFuselage, getLengthBetween_SimpleModel)
+TEST_F(TestCreatorFuselage, getLengthBetween_SimpleModel)
 {
-    const char* filename = "TestData/simpletest.cpacs.xml";
+    setVariables("TestData/simpletest.cpacs.xml", 1);
 
-    TiglCPACSConfigurationHandle tiglHandle = -1;
-    TixiDocumentHandle tixiHandle           = -1;
-
-    ASSERT_EQ(SUCCESS, tixiOpenDocument(filename, &tixiHandle));
-    ASSERT_EQ(TIGL_SUCCESS, tiglOpenCPACSConfiguration(tixiHandle, "", &tiglHandle));
-
-    tigl::CCPACSConfigurationManager& manager = tigl::CCPACSConfigurationManager::GetInstance();
-    tigl::CCPACSConfiguration& config         = manager.GetConfiguration(tiglHandle);
-
-    tigl::CCPACSFuselage& fuselage = config.GetFuselage(1);
-    double length                  = fuselage.GetLengthBetween("D150_Fuselage_1Section1IDElement1","D150_Fuselage_1Section2IDElement1");
-
+    double length = fuselage->GetLengthBetween("D150_Fuselage_1Section1IDElement1","D150_Fuselage_1Section2IDElement1");
     ASSERT_NEAR(1, length, 0.0001);
-
-    tiglCloseCPACSConfiguration(tiglHandle);
-    tixiCloseDocument(tixiHandle);
 }
 
 
 
-TEST(CreatorFuselage, getLengthBetween_MultipleFuselagesModel)
+TEST_F(TestCreatorFuselage, getLengthBetween_MultipleFuselagesModel)
 {
-    const char* filename = "TestData/multiple_fuselages.xml";
+    setVariables("TestData/multiple_fuselages.xml", "SimpleFuselage");
+    double r =-1;
 
-    TiglCPACSConfigurationHandle tiglHandle = -1;
-    TixiDocumentHandle tixiHandle           = -1;
-
-    ASSERT_EQ(SUCCESS, tixiOpenDocument(filename, &tixiHandle));
-    ASSERT_EQ(TIGL_SUCCESS, tiglOpenCPACSConfiguration(tixiHandle, "", &tiglHandle));
-
-    tigl::CCPACSConfigurationManager& manager = tigl::CCPACSConfigurationManager::GetInstance();
-    tigl::CCPACSConfiguration& config         = manager.GetConfiguration(tiglHandle);
-
-    tigl::CCPACSFuselages& fuselages = config.GetFuselages();
-    double r;
-    std::string fuselageUID;
-
-    fuselageUID = "SimpleFuselage";
-    tigl::CCPACSFuselage& fuselage = fuselages.GetFuselage(fuselageUID);
-    r = fuselage.GetLengthBetween("D150_Fuselage_1Section1IDElement1", "D150_Fuselage_1Section2IDElement1");
+    r = fuselage->GetLengthBetween("D150_Fuselage_1Section1IDElement1", "D150_Fuselage_1Section2IDElement1");
     EXPECT_DOUBLE_EQ(r, 1);
 
-    r = fuselage.GetLengthBetween( "D150_Fuselage_1Section3IDElement1", "D150_Fuselage_1Section2IDElement1");
+    r = fuselage->GetLengthBetween( "D150_Fuselage_1Section3IDElement1", "D150_Fuselage_1Section2IDElement1");
     EXPECT_DOUBLE_EQ(r, 1);
 
 
-    fuselageUID = "SimpleFuselage4";
-    tigl::CCPACSFuselage& fuselage2 = fuselages.GetFuselage(fuselageUID);
-    r = fuselage2.GetLengthBetween("D150_Fuselage_4Section1IDElement1", "D150_Fuselage_4Section3IDElement1");
+    setVariables("TestData/multiple_fuselages.xml","SimpleFuselage4");
+    r = fuselage->GetLengthBetween("D150_Fuselage_4Section1IDElement1", "D150_Fuselage_4Section3IDElement1");
     EXPECT_DOUBLE_EQ(r, 4);
 
     // invalid input // TODO error management
     //EXPECT_THROW(fuselage2.GetLengthBetween("D150_Fuselage_4Section1IDElement1", "D150_Fuselage_4Section3IDElement1fas"), tigl::CTiglError  );
 
-    tiglCloseCPACSConfiguration(tiglHandle);
-    tixiCloseDocument(tixiHandle);
 }
 
 
-TEST(CreatorFuselage, setLength_SimpleModel)
+TEST_F(TestCreatorFuselage, setLength_SimpleModel)
 {
-    const char* filename = "TestData/simpletest.cpacs.xml";
-
-    TiglCPACSConfigurationHandle tiglHandle = -1;
-    TixiDocumentHandle tixiHandle           = -1;
-
-    ASSERT_EQ(SUCCESS, tixiOpenDocument(filename, &tixiHandle));
-    ASSERT_EQ(TIGL_SUCCESS, tiglOpenCPACSConfiguration(tixiHandle, "", &tiglHandle));
-
-    tigl::CCPACSConfigurationManager& manager = tigl::CCPACSConfigurationManager::GetInstance();
-    tigl::CCPACSConfiguration& config = manager.GetConfiguration(tiglHandle);
+    setVariables("TestData/simpletest.cpacs.xml", 1);
 
     double lengthBefore, lengthAfter;
-    tigl::CCPACSFuselage& fuselage = config.GetFuselage(1);
-    lengthBefore = fuselage.GetLength();
+
+    lengthBefore = fuselage->GetLength();
     EXPECT_NEAR(2,lengthBefore, 0.0001);
-    fuselage.SetLength(5);
-    lengthAfter = fuselage.GetLength();
+    fuselage->SetLength(5);
+    lengthAfter = fuselage->GetLength();
     EXPECT_NEAR(5,lengthAfter, 0.0001);
-    fuselage.SetLength(3.2);
-    lengthAfter = fuselage.GetLength();
+    fuselage->SetLength(3.2);
+    lengthAfter = fuselage->GetLength();
     EXPECT_NEAR(3.2, lengthAfter, 0.0001);
 
     ASSERT_EQ( SUCCESS, tixiSaveDocument(tixiHandle, "TestData/Output/simpletest-out.cpacs.xml" ) );
 
-    lengthAfter = fuselage.GetLength();
+    lengthAfter = fuselage->GetLength();
     EXPECT_NEAR(3.2, lengthAfter, 0.0001);
 
     // TODO: write cpacs file from tigl
@@ -180,49 +166,204 @@ TEST(CreatorFuselage, setLength_SimpleModel)
     ASSERT_EQ( SUCCESS, tixiSaveDocument(tixiHandle, "TestData/Output/simpletest-out.cpacs.xml" ) );
     */
 
-    tiglCloseCPACSConfiguration(tiglHandle);
-    tixiCloseDocument(tixiHandle);
 }
 
-TEST(CreatorFuselage, setLengthBetween_MultipleFuselagesModel){
-
-    const char* filename = "TestData/multiple_fuselages.xml";
-
-    TiglCPACSConfigurationHandle tiglHandle = -1;
-    TixiDocumentHandle tixiHandle           = -1;
-
-    ASSERT_EQ(SUCCESS, tixiOpenDocument(filename, &tixiHandle));
-    ASSERT_EQ(TIGL_SUCCESS, tiglOpenCPACSConfiguration(tixiHandle, "", &tiglHandle));
-
-    tigl::CCPACSConfigurationManager& manager = tigl::CCPACSConfigurationManager::GetInstance();
-    tigl::CCPACSConfiguration& config         = manager.GetConfiguration(tiglHandle);
+TEST_F(TestCreatorFuselage, setLengthBetween_MultipleFuselagesModel){
 
 
     double newPartialL, oldPartialL,  globalL, oldGlobalL, r;
-    std::string fuselageUID;
 
-    tigl::CCPACSFuselages& fuselages = config.GetFuselages();
+    setVariables("TestData/multiple_fuselages.xml", "SimpleFuselage");
 
-    fuselageUID = "SimpleFuselage";
     newPartialL = 3;
-    tigl::CCPACSFuselage& fuselage1 = fuselages.GetFuselage(fuselageUID);
-    fuselage1.SetLengthBetween("D150_Fuselage_1Section1IDElement1", "D150_Fuselage_1Section2IDElement1",  newPartialL);
-    r = fuselage1.GetLengthBetween("D150_Fuselage_1Section1IDElement1", "D150_Fuselage_1Section2IDElement1");
+    fuselage->SetLengthBetween("D150_Fuselage_1Section1IDElement1", "D150_Fuselage_1Section2IDElement1",  newPartialL);
+    r = fuselage->GetLengthBetween("D150_Fuselage_1Section1IDElement1", "D150_Fuselage_1Section2IDElement1");
     EXPECT_NEAR(r, newPartialL, 0.0001);
 
-    // TODO need to implement rotation part of the setLengthBetween
 
-    fuselageUID = "SimpleFuselage4";
-    tigl::CCPACSFuselage& fuselage4 = fuselages.GetFuselage(fuselageUID);
+    setVariables("TestData/multiple_fuselages.xml", "SimpleFuselage4");
     newPartialL = 5;
-    fuselage4.SetLengthBetween("D150_Fuselage_4Section2IDElement1", "D150_Fuselage_4Section3IDElement1" , newPartialL);
-    r = fuselage4.GetLengthBetween("D150_Fuselage_4Section2IDElement1", "D150_Fuselage_4Section3IDElement1");
+    fuselage->SetLengthBetween("D150_Fuselage_4Section2IDElement1", "D150_Fuselage_4Section3IDElement1" , newPartialL);
+    r = fuselage->GetLengthBetween("D150_Fuselage_4Section2IDElement1", "D150_Fuselage_4Section3IDElement1");
     EXPECT_NEAR(r, newPartialL, 0.0001);
 
 
     ASSERT_EQ( SUCCESS, tixiSaveDocument(tixiHandle, "TestData/Output/multiple-fuselages-out.cpacs.xml" ) );
 
-    tiglCloseCPACSConfiguration(tiglHandle);
-    tixiCloseDocument(tixiHandle);
+}
+
+
+
+
+TEST_F(TestCreatorFuselage, GetCircumferenceOfElements_MultipleFuselagesModel) {
+
+    setVariables("TestData/multiple_fuselages.xml", "SimpleFuselageCircumference");
+
+    std::map<std::string, double> circumferences;
+
+    circumferences = fuselage->GetCircumferenceOfElements();
+
+    EXPECT_EQ(circumferences.size(), 3);
+    EXPECT_NEAR(circumferences["D150_Fuselage_CSection1IDElement1"], 2 * M_PI, 0.5  ); // the interpolation can gives significant difference from the perfect circle
+    EXPECT_NEAR(circumferences["D150_Fuselage_CSection2IDElement1"], 19, 1 );
+    EXPECT_NEAR(circumferences["D150_Fuselage_CSection3IDElement1"], 3.23, 1 );
 
 }
+
+
+
+TEST_F(TestCreatorFuselage, getMaximalCircumferenceOfElements_MultipleFuselagesModel) {
+
+
+    double circumference =-1;
+
+    setVariables("TestData/multiple_fuselages.xml", "SimpleFuselageCircumference");
+    circumference = fuselage->GetMaximalCircumferenceOfElements();
+    EXPECT_NEAR( circumference, 19 , 1 ); // the interpolation can gives significant difference from the perfect circle
+
+
+    setVariables("TestData/multiple_fuselages.xml", "SimpleFuselage");
+    circumference = fuselage->GetMaximalCircumferenceOfElements();
+    EXPECT_NEAR( circumference, 1 * M_PI , 0.1 ); // the interpolation can gives significant difference from the perfect circle
+
+
+    setVariables("TestData/multiple_fuselages.xml", "SimpleFuselageStdP");
+    circumference = fuselage->GetMaximalCircumferenceOfElements();
+    EXPECT_NEAR( circumference, 2 * M_PI , 0.1 ); // the interpolation can gives significant difference from the perfect circle
+
+
+}
+
+
+
+
+TEST_F(TestCreatorFuselage, getMaximalCircumferenceOfElementsBetween_MultipleFuselagesModel) {
+
+    setVariables("TestData/multiple_fuselages.xml", "SimpleFuselageCircumference");
+    double circumference = -1 ;
+
+    circumference = fuselage->GetMaximalCircumferenceOfElementsBetween("D150_Fuselage_CSection1IDElement1", "D150_Fuselage_CSection1IDElement1");
+    EXPECT_NEAR(circumference, 2*M_PI, 0.5 );
+    circumference = fuselage->GetMaximalCircumferenceOfElementsBetween("D150_Fuselage_CSection2IDElement1", "D150_Fuselage_CSection2IDElement1");
+    EXPECT_NEAR(circumference, 19, 0.5 );
+    circumference = fuselage->GetMaximalCircumferenceOfElementsBetween("D150_Fuselage_CSection3IDElement1", "D150_Fuselage_CSection3IDElement1");
+    EXPECT_NEAR(circumference, 3.23, 0.5 );
+
+    circumference = fuselage->GetMaximalCircumferenceOfElementsBetween("D150_Fuselage_CSection1IDElement1", "D150_Fuselage_CSection2IDElement1");
+    EXPECT_NEAR(circumference, 19, 0.5 );
+
+    circumference = fuselage->GetMaximalCircumferenceOfElementsBetween("D150_Fuselage_CSection1IDElement1", "D150_Fuselage_CSection3IDElement1");
+    EXPECT_NEAR(circumference, 19, 0.5 );
+
+    EXPECT_THROW(fuselage->GetMaximalCircumferenceOfElementsBetween("fsd", "sf"), tigl::CTiglError );
+}
+
+
+
+
+
+TEST_F(TestCreatorFuselage, setMaximalCircumferenceOfElements_MultipleFuselagesModel) {
+
+
+    setVariables("TestData/multiple_fuselages.xml", "SimpleFuselage");
+
+    std::map<std::string, double> circumferencesBefore,  circumferencesAfter ;
+    std::map<std::string, double>::iterator it;
+    double scale, maxCircBerfore, maxCircAfter;
+
+    circumferencesBefore = fuselage->GetCircumferenceOfElements();
+    scale = 3.3;
+    maxCircBerfore = fuselage->GetMaximalCircumferenceOfElements();
+    fuselage->SetMaximalCircumferenceOfElements(scale * maxCircBerfore);
+    circumferencesAfter = fuselage->GetCircumferenceOfElements();
+    for(it = circumferencesBefore.begin(); it != circumferencesBefore.end(); it++){
+        EXPECT_NEAR(circumferencesAfter[it->first], it->second * scale, 0.0001 );
+    }
+
+
+    setVariables("TestData/multiple_fuselages.xml", "FuselageUnconventionalOrdering");
+    circumferencesBefore = fuselage->GetCircumferenceOfElements();
+    scale = 0.3;
+    maxCircBerfore = fuselage->GetMaximalCircumferenceOfElements();
+    fuselage->SetMaximalCircumferenceOfElements(scale * maxCircBerfore);
+    circumferencesAfter = fuselage->GetCircumferenceOfElements();
+    for(it = circumferencesBefore.begin(); it != circumferencesBefore.end(); it++){
+        EXPECT_NEAR(circumferencesAfter[it->first], it->second * scale, 0.0001 );
+    }
+
+
+
+    setVariables("TestData/multiple_fuselages.xml", "SimpleFuselageCircumference");
+    circumferencesBefore = fuselage->GetCircumferenceOfElements();
+    scale = 0.9;
+    maxCircBerfore = fuselage->GetMaximalCircumferenceOfElements();
+    fuselage->SetMaximalCircumferenceOfElements(scale * maxCircBerfore);
+    circumferencesAfter = fuselage->GetCircumferenceOfElements();
+    for(it = circumferencesBefore.begin(); it != circumferencesBefore.end(); it++){
+        EXPECT_NEAR(circumferencesAfter[it->first], it->second * scale, 0.0001 );
+    }
+
+
+
+    setVariables("TestData/multiple_fuselages.xml", "SimpleFuselage3");
+    circumferencesBefore = fuselage->GetCircumferenceOfElements();
+    scale = 4;
+    maxCircBerfore = fuselage->GetMaximalCircumferenceOfElements();
+    fuselage->SetMaximalCircumferenceOfElements(scale * maxCircBerfore);
+    circumferencesAfter = fuselage->GetCircumferenceOfElements();
+    for(it = circumferencesBefore.begin(); it != circumferencesBefore.end(); it++){
+        EXPECT_NEAR(circumferencesAfter[it->first], it->second * scale, 0.0001 );
+    }
+    scale = 1.0/4.0;
+    maxCircBerfore = fuselage->GetMaximalCircumferenceOfElements();
+    fuselage->SetMaximalCircumferenceOfElements(scale * maxCircBerfore);
+    circumferencesAfter = fuselage->GetCircumferenceOfElements();
+    for(it = circumferencesBefore.begin(); it != circumferencesBefore.end(); it++){
+        EXPECT_NEAR(circumferencesAfter[it->first], it->second, 0.0001 );
+    }
+
+
+    setVariables("TestData/multiple_fuselages.xml", "SimpleFuselage4");
+    circumferencesBefore = fuselage->GetCircumferenceOfElements();
+    scale = 4;
+    maxCircBerfore = fuselage->GetMaximalCircumferenceOfElements();
+    fuselage->SetMaximalCircumferenceOfElements(scale * maxCircBerfore);
+    circumferencesAfter = fuselage->GetCircumferenceOfElements();
+    for(it = circumferencesBefore.begin(); it != circumferencesBefore.end(); it++){
+        EXPECT_NEAR(circumferencesAfter[it->first], it->second * scale, 0.0001 );
+    }
+
+}
+
+
+TEST_F(TestCreatorFuselage, setMaximalCircumferenceOfElementsBetween_MultipleFuselagesModel) {
+
+    setVariables("TestData/multiple_fuselages.xml", "SimpleFuselage");
+
+    std::map<std::string, double> circumferencesBefore,  circumferencesAfter ;
+    std::map<std::string, double>::iterator it;
+    double scale, maxCircBerfore, maxCircAfter;
+
+
+    fuselage->SetMaximalCircumferenceOfElementsBetween("D150_Fuselage_1Section1IDElement1", "D150_Fuselage_1Section1IDElement1", 5.1);
+    maxCircAfter = fuselage->GetMaximalCircumferenceOfElementsBetween("D150_Fuselage_1Section1IDElement1", "D150_Fuselage_1Section1IDElement1");
+    EXPECT_NEAR(maxCircAfter, 5.1, 0.001);
+
+
+    fuselage->SetMaximalCircumferenceOfElementsBetween("D150_Fuselage_1Section2IDElement1", "D150_Fuselage_1Section2IDElement1", 5.1);
+    maxCircAfter = fuselage->GetMaximalCircumferenceOfElementsBetween("D150_Fuselage_1Section2IDElement1", "D150_Fuselage_1Section2IDElement1");
+    EXPECT_NEAR(maxCircAfter, 5.1, 0.001);
+
+
+    fuselage->SetMaximalCircumferenceOfElementsBetween("D150_Fuselage_1Section2IDElement1", "D150_Fuselage_1Section3IDElement1", 9.1);
+    maxCircAfter = fuselage->GetMaximalCircumferenceOfElementsBetween("D150_Fuselage_1Section2IDElement1", "D150_Fuselage_1Section3IDElement1");
+    EXPECT_NEAR(maxCircAfter, 9.1, 0.001);
+    maxCircAfter = fuselage->GetMaximalCircumferenceOfElementsBetween("D150_Fuselage_1Section3IDElement1", "D150_Fuselage_1Section3IDElement1");
+    EXPECT_NEAR(maxCircAfter, M_PI* 9.1/5.1, 0.1);
+
+
+
+}
+
+
+

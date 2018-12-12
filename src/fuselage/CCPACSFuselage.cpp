@@ -640,7 +640,6 @@ std::map<std::string, CTiglPoint> CCPACSFuselage::GetElementsCenters()
     std::map<std::string, CTiglPoint> centers; // center of the element
 
     CCPACSFuselageSegments& segments = GetSegments();
-    CCPACSFuselageSections& sections = GetSections();
 
     std::string tempFromElmUID, tempToElmUID;
     CTiglPoint fromCenter, toCenter;
@@ -1002,7 +1001,7 @@ void CCPACSFuselage::SetLengthBetween(const std::string& startElement, const std
     // UPDATE THE FUSELAGE STRUCTURE
 
     GetConfiguration().WriteCPACS(GetConfiguration().GetUID());
-    Invalidate(); // to force the rebuild of the loft?
+    Invalidate(); // to force the rebuild of the loft? yes
 }
 
 std::vector<CTiglTransformation> CCPACSFuselage::GetTransformationChain(const std::string& elementUID)
@@ -1074,38 +1073,184 @@ CTiglTransformation CCPACSFuselage::GetTransformToPlaceElementByTranslationAt(co
     return ep;
 }
 
+std::map<std::string, double> CCPACSFuselage::GetCircumferenceOfElements()
+{
+
+    std::map<std::string, double> circumferences;
+
+    CCPACSFuselageSegments& segments = GetSegments();
+
+    std::string tempFromElmUID, tempToElmUID;
+    CTiglPoint fromCenter, toCenter;
+    TopoDS_Shape curve;
+    gp_Pnt centerPoint;
+    for (int i = 1; i <= segments.GetSegmentCount(); i++) {
+        CCPACSFuselageSegment& seg = segments.GetSegment(i);
+        tempFromElmUID             = seg.GetStartSectionElementUID();
+        tempToElmUID               = seg.GetEndSectionElementUID();
+
+        circumferences[tempFromElmUID] = GetCircumference(i, 0);
+        circumferences[tempToElmUID]   = GetCircumference(i, 1);
+    }
+
+    return circumferences;
+}
+
+double CCPACSFuselage::GetMaximalCircumferenceOfElements()
+{
+    std::map<std::string, double> circumferences = GetCircumferenceOfElements();
+
+    std::string maxUID      = "";
+    double maxCircumference = std::numeric_limits<double>::min();
+
+    std::map<std::string, double>::iterator it;
+    for (it = circumferences.begin(); it != circumferences.end(); it++) {
+        if (it->second > maxCircumference) {
+            maxUID           = it->first;
+            maxCircumference = it->second;
+        }
+    }
+    return maxCircumference;
+}
+
+
+double CCPACSFuselage::GetMaximalCircumferenceOfElementsBetween(std::string startElementUID, std::string endElementUID){
+
+
+    std::vector<std::string> graph = GetCreatorGraph();
+    std::vector<std::string> elementsBetween; // contain the start and the end
+
+    bool afterStart = false;
+    bool afterEnd   = false;
+    std::vector<std::string>::iterator it;
+    for (int i = 0; i < graph.size(); i++) {
+        if((graph[i] == startElementUID) && (graph[i] == endElementUID) ){ // special case where the end and the start is the same
+            afterStart = true;
+            afterEnd = true;
+            elementsBetween.push_back( graph[i]);
+        }
+        else if ((graph[i] == startElementUID) ) {
+            afterStart = true;
+            elementsBetween.push_back(graph[i]);
+        }
+        else if ((graph[i] == endElementUID) ) {
+            afterEnd = true;
+            elementsBetween.push_back(graph[i]);
+        }
+        else if (afterStart == true && afterEnd == false) {
+            elementsBetween.push_back(graph[i]);
+        }
+    }
+
+    if (elementsBetween.size() < 1) {
+        throw CTiglError("CCPACSFuselage::GetMaximalCircumferenceOfElementsBetween: impossible to get the start and the end correctly");
+    }
+
+    std::map<std::string, double> circumferences = GetCircumferenceOfElements();
+
+    std::string maxUID      = "";
+    double maxCircumference = std::numeric_limits<double>::min();
+
+    for(int i = 0; i < elementsBetween.size(); i++ ){
+        if( circumferences[elementsBetween[i]]> maxCircumference){
+            maxUID = elementsBetween[i];
+            maxCircumference = circumferences[elementsBetween[i]];
+        }
+    }
+
+    return maxCircumference;
+}
 
 
 
+void CCPACSFuselage::ScaleCircumferenceOfElements(std::vector<std::string> elementsToScale, double scaleFactor)
+{
+
+    /*
+         *  The idea is to bring the element to its center and scale it in world coordinate system.
+         *  So we get:
+         *  FPSE' = Ti*S*T*FPSE
+         *  E' =  Si*Pi*Fi*Ti*S*T*FPSE
+         */
+
+    CTiglTransformation centerToOriginM, centerToOriginMI, scaleM, newE;
+
+    scaleM.SetIdentity();
+    scaleM.AddScaling(scaleFactor, scaleFactor, scaleFactor);
+
+    std::map<std::string, CTiglPoint> centers = GetElementsCenters();
+    std::vector<CTiglTransformation> chain;
+    std::string tempUID;
+    for (int i = i; i < elementsToScale.size(); i++) {
+        tempUID = elementsToScale[i];
+        chain   = GetTransformationChain(tempUID);
+        centerToOriginM.SetIdentity();
+        centerToOriginM.AddTranslation(-centers[tempUID].x, -centers[tempUID].y, -centers[tempUID].z);
+        centerToOriginMI = centerToOriginM.Inverted();
+        newE             = chain[1].Inverted() * chain[2].Inverted() * chain[3].Inverted() * centerToOriginMI * scaleM *
+               centerToOriginM * chain[3] * chain[2] * chain[1] * chain[0];
+        CCPACSFuselageSectionElement& element =
+                GetUIDManager().ResolveObject<CCPACSFuselageSectionElement>(tempUID);
+        CCPACSTransformation& storedTransformation = element.GetTransformation();
+        storedTransformation.setTransformationMatrix(newE);
+    }
 
 
+    // Update the tigl object
+    GetConfiguration().WriteCPACS(GetConfiguration().GetUID());
+    Invalidate();
+}
 
+void CCPACSFuselage::SetMaximalCircumferenceOfElementsBetween(std::string startUID, std::string endUID,
+                                                            double newMaximalCircumference)
+{
 
+    if (newMaximalCircumference < 0) {
+        throw CTiglError("setFuselageMaximalCircumference: the newMaximalCricumference should be bigger than 0");
+    }
 
+    double oldMaximalCircumference = GetMaximalCircumferenceOfElementsBetween(startUID, endUID);
 
+    double scaleFactor = newMaximalCircumference / oldMaximalCircumference;
 
+    std::vector<std::string> graph = GetCreatorGraph();
+    std::vector<std::string> elementsBetween; // contain the start and the end
 
+    bool afterStart = false;
+    bool afterEnd   = false;
+    std::vector<std::string>::iterator it;
+    for (int i = 0; i < graph.size(); i++) {
+        if((graph[i] == startUID) && (graph[i] == endUID) ){ // special case where the end and the start is the same
+            afterStart = true;
+            afterEnd = true;
+            elementsBetween.push_back( graph[i]);
+        }
+        else if (graph[i] == startUID) {
+            afterStart = true;
+            elementsBetween.push_back(graph[i]);
+        }
+        else if (graph[i] == endUID) {
+            afterEnd = true;
+            elementsBetween.push_back(graph[i]);
+        }
+        else if (afterStart == true && afterEnd == false) {
+            elementsBetween.push_back(graph[i]);
+        }
+    }
 
+    if (elementsBetween.size() < 1) {
+        throw CTiglError("CCPACSFuselage::GetMaximalCircumferenceOfElementsBetween: impossible to get the start and the end correctly");
+    }
 
+    ScaleCircumferenceOfElements(elementsBetween, scaleFactor);
+}
 
+void CCPACSFuselage::SetMaximalCircumferenceOfElements(double newMaximalCircumference)
+{
+    std::string noiseUID = GetNoiseUID();
+    std::string tailUID = GetTailUID();
+    SetMaximalCircumferenceOfElementsBetween(noiseUID, tailUID, newMaximalCircumference);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
 
 } // end namespace tigl

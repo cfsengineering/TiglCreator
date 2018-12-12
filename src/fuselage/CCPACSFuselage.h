@@ -115,7 +115,18 @@ public:
     // Returns the circumference of the segment "segmentIndex" at a given eta
     TIGL_EXPORT double GetCircumference(int segmentIndex, double eta);
 
-    // Returns the Component Type TIGL_COMPONENT_FUSELAGE
+    // Returns the circumference of biggest cpacs element
+    TIGL_EXPORT double GetMaximalCircumferenceOfElements();
+
+    // Returns the circumference of biggest cpacs element that is between or at the given uid
+    TIGL_EXPORT double GetMaximalCircumferenceOfElementsBetween(std::string startElementUID, std::string endElementUID);
+
+
+    TIGL_EXPORT void SetMaximalCircumferenceOfElements(double newMaximalCircumference);
+
+    TIGL_EXPORT void SetMaximalCircumferenceOfElementsBetween(std::string startUID, std::string endUID, double newMaximalCircumference);
+
+        // Returns the Component Type TIGL_COMPONENT_FUSELAGE
     TIGL_EXPORT TiglGeometricComponentType GetComponentType() const OVERRIDE {return TIGL_COMPONENT_FUSELAGE; }
     TIGL_EXPORT TiglGeometricComponentIntent GetComponentIntent() const OVERRIDE {return TIGL_INTENT_PHYSICAL;}
 
@@ -145,6 +156,13 @@ public:
     // Get the UID of the elements contains in the fuselage in the creator order
     std::vector<std::string> GetCreatorGraph();
 
+
+    // Return the the centers of each CPCACS elements contains in the fuselage in the form <UID, CTiglPoint>
+    std::map<std::string, CTiglPoint> GetElementsCenters();
+
+    // Returns the circumference in world coordinate of each elements contains in this fuselage
+    std::map<std::string, double> GetCircumferenceOfElements();
+
 protected:
     void BuildGuideCurves(TopoDS_Compound& cache) const;
 
@@ -158,8 +176,6 @@ protected:
 
     void SetFaceTraits(PNamedShape loft) const;
 
-    // Return the the centers of each CPCACS elements contains in the fuselage in the form <UID, CTiglPoint>
-    std::map<std::string, CTiglPoint> GetElementsCenters();
 
     // Return the uid of the noise according the creator definition
     std::string GetNoiseUID();
@@ -182,6 +198,10 @@ protected:
     // Return the transformation that the element should have to have its origin at the given point
     CTiglTransformation GetTransformToPlaceElementByTranslationAt(const std::string& elementUID,
                                                                   const CTiglPoint& wantedOriginP);
+    
+
+    void ScaleCircumferenceOfElements(std::vector<std::string> elementsToScale, double scaleFactor) ;
+
 
 private:
     // get short name for loft

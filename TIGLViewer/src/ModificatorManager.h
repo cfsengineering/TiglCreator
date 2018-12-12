@@ -49,6 +49,7 @@
  * element has a associate ModificatorWidget, it will set this particular ModificatorWidget and display it.
  * Then if the user, click on the "apply" function, the modificator manager will apply the change onto the
  * CPACSConfiguration though the ModificatorWidget.
+ * When the scene new to be update because the CCPACSConfiguration was modify, the signal "configurationEdited" is emit.
  *
  * @author Malo Drougard
  *
