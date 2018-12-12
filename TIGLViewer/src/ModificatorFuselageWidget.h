@@ -25,6 +25,10 @@ public slots:
     // If a new partial length is set it will recompute the the global length
     void recomputeTotalLength(double newPartialLength);
 
+
+    void expendRadiusDetails(bool checked);
+
+    void setRadiusBetweenFromComboBoxes();
     //void setCircumferenceFromRadius(double newRadius);
     //void setRadiusFromCircumference(double newCircumference);
 
@@ -57,11 +61,17 @@ private:
     double internalPartialLength;
 
     // Circumference parameters:
-    QDoubleSpinBox* spinBoxCircumference;
     QDoubleSpinBox* spinBoxRadius;
+    QPushButton* btnExpendRadiusDetails;
+    QWidget* widgetRadiusDetails;
+    QComboBox* comboBoxRadiusBE1;
+    QComboBox* comboBoxRadiusBE2;
+    QDoubleSpinBox* spinBoxRadiusBetween;
+
 
     // Internal circumference parameters:
-    double internalCircumference;
+    double internalRadius;
+    double internalRadiusBetween;
 
 private:
     tigl::CCPACSFuselage* fuselage;
