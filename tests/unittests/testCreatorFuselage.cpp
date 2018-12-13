@@ -237,6 +237,17 @@ TEST_F(TestCreatorFuselage, getMaximalCircumferenceOfElements_MultipleFuselagesM
 
 
 
+TEST_F(TestCreatorFuselage, getMaximalCircumferenceOfElements_CrmWingModel) // also to check th e preformance ( should run in less then 0.5s)
+{
+    setVariables("TestData/crm.xml", 1);
+
+    double c                  = fuselage->GetMaximalCircumferenceOfElements();
+    ASSERT_NEAR(20, c, 2);
+}
+
+
+
+
 TEST_F(TestCreatorFuselage, getMaximalCircumferenceOfElementsBetween_MultipleFuselagesModel) {
 
     setVariables("TestData/multiple_fuselages.xml", "SimpleFuselageCircumference");

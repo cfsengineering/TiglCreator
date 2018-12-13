@@ -35,6 +35,7 @@
 #include "CCPACSGuideCurve.h"
 #include "CTiglFuselageConnection.h"
 #include "Cache.h"
+#include "FuselageGraph.h"
 
 #include "TopoDS_Shape.hxx"
 #include "TopoDS_Compound.hxx"
@@ -121,7 +122,6 @@ public:
     // Returns the circumference of biggest cpacs element that is between or at the given uid
     TIGL_EXPORT double GetMaximalCircumferenceOfElementsBetween(std::string startElementUID, std::string endElementUID);
 
-
     TIGL_EXPORT void SetMaximalCircumferenceOfElements(double newMaximalCircumference);
 
     TIGL_EXPORT void SetMaximalCircumferenceOfElementsBetween(std::string startUID, std::string endUID, double newMaximalCircumference);
@@ -158,10 +158,20 @@ public:
 
 
     // Return the the centers of each CPCACS elements contains in the fuselage in the form <UID, CTiglPoint>
+    // should be use only outside this class, in this class prefer to use GetGraph.getCenters for performance reason 
     std::map<std::string, CTiglPoint> GetElementsCenters();
 
     // Returns the circumference in world coordinate of each elements contains in this fuselage
+    // should be use only outside this class, in this class prefer to use GetGraph.getCircumferences for performance reason 
     std::map<std::string, double> GetCircumferenceOfElements();
+
+
+    // Return the uid of the noise according the creator definition
+    std::string GetNoiseUID();
+
+    // Return the uid of the tail according the creator definition
+    std::string GetTailUID();
+
 
 protected:
     void BuildGuideCurves(TopoDS_Compound& cache) const;
@@ -176,12 +186,6 @@ protected:
 
     void SetFaceTraits(PNamedShape loft) const;
 
-
-    // Return the uid of the noise according the creator definition
-    std::string GetNoiseUID();
-
-    // Return the uid of the tail according the creator definition
-    std::string GetTailUID();
 
     // Retrun the global transformation apply on this particular element.
     // This means that the transformation of element, positionings, section and fuselage are correctly combine togheter
@@ -202,12 +206,16 @@ protected:
 
     void ScaleCircumferenceOfElements(std::vector<std::string> elementsToScale, double scaleFactor) ;
 
+    FuselageGraph& GetGraph();
+
 
 private:
     // get short name for loft
     std::string GetShortShapeName() const;
 
 private:
+    FuselageGraph graph;
+
     CCPACSConfiguration*       configuration;        /**< Parent configuration    */
     FusedElementsContainerType fusedElements;        /**< Stores already fused segments */
 
