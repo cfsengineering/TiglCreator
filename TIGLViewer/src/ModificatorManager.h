@@ -54,6 +54,8 @@
  * @author Malo Drougard
  *
  */
+
+class TIGLViewerWindow;
 class ModificatorManager: public QObject {
     Q_OBJECT
 
@@ -99,6 +101,8 @@ protected:
 
 
 private:
+
+    TIGLViewerWindow*                       app;
 
     tigl::CCPACSConfiguration* config ;
 

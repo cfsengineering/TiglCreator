@@ -622,22 +622,26 @@ TopoDS_Shape transformFuselageProfileGeometry(const CTiglTransformation& fuselTr
 
 double CCPACSFuselage::GetLength()
 {
-    std::string noise = GetNoiseUID();
-    std::string tail  = GetTailUID();
+    std::string noise = GetGraph().getNoseUID();
+    std::string tail  = GetGraph().getTailUID();
     return GetLengthBetween(noise, tail);
 }
 
 double CCPACSFuselage::GetLengthBetween(const std::string& startElementUID, const std::string& endElementUID)
 {
-    std::map<std::string, CTiglPoint>& centers = GetGraph().getCenters(); // is it passs by reference? yes // we do not use GetElementsCenters for performance reason
-    CTiglPoint delta                          = centers[endElementUID] - centers[startElementUID];
+    const std::map<std::string, CTiglPoint>& centers = GetElementCenters();
+    CTiglPoint delta                          = centers.at(endElementUID) - centers.at(startElementUID);
     return delta.norm2();
 }
 
-std::map<std::string, CTiglPoint> CCPACSFuselage::GetElementsCenters()
+const std::map<std::string, CTiglPoint>& CCPACSFuselage::GetElementCenters()
 {
 
-    std::map<std::string, CTiglPoint> centers; // center of the element
+    if (!  centers.empty()){ // create only the first time
+        return centers;
+    }
+
+    centers.clear(); // center of the element
 
     CCPACSFuselageSegments& segments = GetSegments();
 
@@ -665,27 +669,17 @@ std::map<std::string, CTiglPoint> CCPACSFuselage::GetElementsCenters()
     return centers;
 }
 
-std::vector<std::string> CCPACSFuselage::GetCreatorGraph()
+FuselageGraph CCPACSFuselage::GetCreatorGraph()
 {
-    std::vector<std::string> r = GetGraph().getCreatorGraph();  // should copy
-    return r;
+    return GetGraph();
 
 }
 
-std::string CCPACSFuselage::GetNoiseUID()
-{
-    return GetGraph().getNoiseUID();
-}
-
-std::string CCPACSFuselage::GetTailUID()
-{
-    return GetGraph().getTailUID();
-}
 
 void CCPACSFuselage::SetLength(double newLength){
-    std::string noise = GetNoiseUID();
-    std::string tail = GetTailUID();
-    SetLengthBetween(noise, tail, newLength);
+    std::string nose = GetGraph().getNoseUID();
+    std::string tail = GetGraph().getTailUID();
+    SetLengthBetween(nose, tail, newLength);
 }
 
 
@@ -695,7 +689,7 @@ void CCPACSFuselage::SetLengthBetween(const std::string& startElement, const std
 {
 
     // todo verify input order
-    std::vector<std::string>& tempGraph = GetGraph().getCreatorGraph();
+    std::vector<std::string>& tempGraph = GetGraph().getSimpleGraph();
 
     /*
          * Divide the elements in 3 categories:
@@ -704,7 +698,6 @@ void CCPACSFuselage::SetLengthBetween(const std::string& startElement, const std
          * 3) Elements after end that need to be shifted has the last between element
          */
     std::vector<std::string> elementsBetween = GetGraph().getElementsInBetween(startElement, endElement);
-    std::vector<std::string> elementsBefore = GetGraph().getElementsBefore(startElement);
     std::vector<std::string> elementsAfter = GetGraph().getElementsAfter(endElement);
 
     if( elementsBetween.size() < 2 ){
@@ -741,9 +734,9 @@ void CCPACSFuselage::SetLengthBetween(const std::string& startElement, const std
     std::map<std::string, CTiglPoint> newGlobalOrigin;
 
     // Get fuselage point in world coordinate
-    std::map<std::string, CTiglPoint>& oldCenterPoints   = GetGraph().getCenters();
-    CTiglPoint startP = oldCenterPoints[startElement];
-    CTiglPoint endP   = oldCenterPoints[endElement];
+    const std::map<std::string, CTiglPoint>& oldCenterPoints   = GetElementCenters();
+    CTiglPoint startP = oldCenterPoints.at(startElement);
+    CTiglPoint endP   = oldCenterPoints.at(endElement);
 
     // bring StartP to Origin
     CTiglTransformation startToO;
@@ -795,8 +788,8 @@ void CCPACSFuselage::SetLengthBetween(const std::string& startElement, const std
     CTiglTransformation totalTransformation = startToOI * rotEndToX4dI * scaleM * rotEndToX4d * startToO;
     CTiglPoint tempDelatOtoP;
     for (int i = 0; i < elementsBetween.size(); i++) {
-        newCenterPoints[elementsBetween[i]] = totalTransformation * oldCenterPoints[elementsBetween[i]];
-        tempDelatOtoP                       = oldCenterPoints[elementsBetween[i]] - oldGlobalOrigin[elementsBetween[i]];
+        newCenterPoints[elementsBetween[i]] = totalTransformation * oldCenterPoints.at(elementsBetween[i]);
+        tempDelatOtoP                       = oldCenterPoints.at(elementsBetween[i]) - oldGlobalOrigin[elementsBetween[i]];
         // delta between origin and the center point will not change because no scaling or rotation will be changed
         newGlobalOrigin[elementsBetween[i]] = newCenterPoints[elementsBetween[i]] - tempDelatOtoP;
     }
@@ -830,7 +823,7 @@ void CCPACSFuselage::SetLengthBetween(const std::string& startElement, const std
 
     // UPDATE THE FUSELAGE STRUCTURE
 
-    GetGraph().clear(); // the structure has changed -> so we need to reconstruct the graph
+    centers.clear(); // the centers has changed, so we need to reconstruct them
     GetConfiguration().WriteCPACS(GetConfiguration().GetUID());
     Invalidate(); // to force the rebuild of the loft? yes
 }
@@ -865,7 +858,7 @@ CTiglTransformation CCPACSFuselage::GetGlobalTransformation(const std::string& e
 }
 
 CTiglTransformation CCPACSFuselage::GetTransformToPlaceElementByTranslationAt(const std::string& elementUID,
-                                                                              const CTiglPoint& wantedOriginP)
+                                                                                  const CTiglPoint& wantedOriginP)
 {
 
     /* We search a new E' such that:
@@ -904,10 +897,14 @@ CTiglTransformation CCPACSFuselage::GetTransformToPlaceElementByTranslationAt(co
     return ep;
 }
 
-std::map<std::string, double> CCPACSFuselage::GetCircumferenceOfElements()
+const std::map<std::string, double>& CCPACSFuselage::GetElementCircumferences()
 {
 
-    std::map<std::string, double> circumferences;
+    if( ! circumferences.empty() ){
+        return circumferences;
+    }
+
+    circumferences.clear();
 
     CCPACSFuselageSegments& segments = GetSegments();
 
@@ -938,9 +935,10 @@ std::map<std::string, double> CCPACSFuselage::GetCircumferenceOfElements()
 
 double CCPACSFuselage::GetMaximalCircumferenceOfElements()
 {
-    std::string noise = GetNoiseUID();
-    std::string tail = GetTailUID();
+    std::string noise = GetGraph().getNoseUID();
+    std::string tail = GetGraph().getTailUID();
     return GetMaximalCircumferenceOfElementsBetween(noise, tail);
+
 }
 
 
@@ -952,15 +950,15 @@ double CCPACSFuselage::GetMaximalCircumferenceOfElementsBetween(std::string star
         throw CTiglError("CCPACSFuselage::GetMaximalCircumferenceOfElementsBetween: impossible to get the start and the end correctly");
     }
 
-    std::map<std::string, double>& circumferences = GetGraph().getCircumferences();
+    const std::map<std::string, double>& circumferences = GetElementCircumferences();
 
     std::string maxUID      = "";
     double maxCircumference = std::numeric_limits<double>::min();
 
     for(int i = 0; i < elementsBetween.size(); i++ ){
-        if( circumferences[elementsBetween[i]]> maxCircumference){
+        if( circumferences.at(elementsBetween[i])> maxCircumference){
             maxUID = elementsBetween[i];
-            maxCircumference = circumferences[elementsBetween[i]];
+            maxCircumference = circumferences.at(elementsBetween[i]);
         }
     }
 
@@ -984,14 +982,14 @@ void CCPACSFuselage::ScaleCircumferenceOfElements(std::vector<std::string> eleme
     scaleM.SetIdentity();
     scaleM.AddScaling(scaleFactor, scaleFactor, scaleFactor);
 
-    std::map<std::string, CTiglPoint>& centers = GetGraph().getCenters();
+    const std::map<std::string, CTiglPoint>& centers = GetElementCenters();
     std::vector<CTiglTransformation> chain;
     std::string tempUID;
     for (int i = 0; i < elementsToScale.size(); i++) {
         tempUID = elementsToScale[i];
         chain   = GetTransformationChain(tempUID);
         centerToOriginM.SetIdentity();
-        centerToOriginM.AddTranslation(-centers[tempUID].x, -centers[tempUID].y, -centers[tempUID].z);
+        centerToOriginM.AddTranslation(-centers.at(tempUID).x, -centers.at(tempUID).y, -centers.at(tempUID).z);
         centerToOriginMI = centerToOriginM.Inverted();
         newE             = chain[1].Inverted() * chain[2].Inverted() * chain[3].Inverted() * centerToOriginMI * scaleM *
                centerToOriginM * chain[3] * chain[2] * chain[1] * chain[0];
@@ -1003,7 +1001,7 @@ void CCPACSFuselage::ScaleCircumferenceOfElements(std::vector<std::string> eleme
 
 
     // Update the tigl object
-    GetGraph().clear();
+    circumferences.clear(); // the circumferences of each element as change
     GetConfiguration().WriteCPACS(GetConfiguration().GetUID());
     Invalidate();
 }
@@ -1031,8 +1029,8 @@ void CCPACSFuselage::SetMaximalCircumferenceOfElementsBetween(std::string startU
 
 void CCPACSFuselage::SetMaximalCircumferenceOfElements(double newMaximalCircumference)
 {
-    std::string noiseUID = GetNoiseUID();
-    std::string tailUID = GetTailUID();
+    std::string noiseUID = GetGraph().getNoseUID();
+    std::string tailUID = GetGraph().getTailUID();
     SetMaximalCircumferenceOfElementsBetween(noiseUID, tailUID, newMaximalCircumference);
 
 }

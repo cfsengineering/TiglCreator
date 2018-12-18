@@ -62,17 +62,13 @@ public:
     std::vector<std::string> getElementsAfter(std::string uid) ;
 
 
-    inline std::string getNoiseUID() {return root; };
+    inline std::string getNoseUID() {return root; };
 
     inline std::string getTailUID() {return leaf; };
 
-    inline std::vector<std::string>& getCreatorGraph() { return simpleGraph; };
+    inline std::vector<std::string>& getSimpleGraph() { return simpleGraph; };
 
     inline std::map<std::string, std::vector<std::string> >& getGraph() { return graph; };
-
-    inline std::map<std::string, double>& getCircumferences() {return circumferences;};
-
-    inline std::map<std::string, CTiglPoint>& getCenters() {return centers;};
 
 
 protected:
@@ -85,8 +81,6 @@ protected:
 
     std::map<std::string, std::vector<std::string> > graph;
     std::vector<std::string> simpleGraph;
-    std::map<std::string, double> circumferences;
-    std::map<std::string, CTiglPoint> centers;
     std::string root;
     std::string leaf;
 

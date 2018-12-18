@@ -153,24 +153,18 @@ public:
     TIGL_EXPORT TopoDS_Wire projectParallel(TopoDS_Shape wireOrEdge, gp_Dir direction) const;
 
 
+
+
     // Get the UID of the elements contains in the fuselage in the creator order
-    std::vector<std::string> GetCreatorGraph();
+    FuselageGraph GetCreatorGraph();
 
 
     // Return the the centers of each CPCACS elements contains in the fuselage in the form <UID, CTiglPoint>
-    // should be use only outside this class, in this class prefer to use GetGraph.getCenters for performance reason 
-    std::map<std::string, CTiglPoint> GetElementsCenters();
+    const std::map<std::string, CTiglPoint>& GetElementCenters();
 
     // Returns the circumference in world coordinate of each elements contains in this fuselage
-    // should be use only outside this class, in this class prefer to use GetGraph.getCircumferences for performance reason 
-    std::map<std::string, double> GetCircumferenceOfElements();
+    const std::map<std::string, double>& GetElementCircumferences();
 
-
-    // Return the uid of the noise according the creator definition
-    std::string GetNoiseUID();
-
-    // Return the uid of the tail according the creator definition
-    std::string GetTailUID();
 
 
 protected:
@@ -202,11 +196,12 @@ protected:
     // Return the transformation that the element should have to have its origin at the given point
     CTiglTransformation GetTransformToPlaceElementByTranslationAt(const std::string& elementUID,
                                                                   const CTiglPoint& wantedOriginP);
-    
 
     void ScaleCircumferenceOfElements(std::vector<std::string> elementsToScale, double scaleFactor) ;
 
     FuselageGraph& GetGraph();
+
+
 
 
 private:
@@ -215,6 +210,8 @@ private:
 
 private:
     FuselageGraph graph;
+    std::map<std::string, CTiglPoint> centers; // stored for performance reason, should be accessed by GetElementCenters
+    std::map<std::string, double> circumferences; // stored for performance reason, should be accessed by GetCircumferences
 
     CCPACSConfiguration*       configuration;        /**< Parent configuration    */
     FusedElementsContainerType fusedElements;        /**< Stores already fused segments */

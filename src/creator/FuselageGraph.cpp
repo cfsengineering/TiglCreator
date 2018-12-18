@@ -18,9 +18,7 @@ void tigl::FuselageGraph::build(tigl::CCPACSFuselage *inFuselage) {
 
         fuselage = inFuselage;
         createGraph();
-        centers = fuselage->GetElementsCenters();
         createSimpleGraph();
-        circumferences = fuselage->GetCircumferenceOfElements();
     }
 }
 
@@ -95,9 +93,12 @@ void tigl::FuselageGraph::createSimpleGraph() {
     }
 
 
+
+    const std::map<std::string, CTiglPoint> & centers = fuselage->GetElementCenters();
+;
     if( stdIsPossible){
         // the root is the extremity that is closest to the origin
-        if (centers[leaf].norm2() < centers[root].norm2()) {
+        if (centers.at(leaf).norm2() < centers.at(root).norm2()) {
             std::string temp = root;
             root            = leaf;
             leaf            = temp;
@@ -154,8 +155,6 @@ void tigl::FuselageGraph::clear() {
     fuselage = nullptr;
     graph.clear();
     simpleGraph.clear();
-    circumferences.clear();
-    centers.clear();
     root = "";
     leaf = "";
 

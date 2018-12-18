@@ -352,7 +352,6 @@ void TIGLViewerContext::displayShape(const PNamedShape& pshape, bool updateViewe
     if (!pshape) {
         return;
     }
-
     TIGLViewerSettings& settings = TIGLViewerSettings::Instance();
     Handle(AIS_TexturedShape) shape = new AIS_TexturedShape(pshape->Shape());
 

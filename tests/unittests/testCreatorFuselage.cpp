@@ -201,7 +201,7 @@ TEST_F(TestCreatorFuselage, GetCircumferenceOfElements_MultipleFuselagesModel) {
 
     std::map<std::string, double> circumferences;
 
-    circumferences = fuselage->GetCircumferenceOfElements();
+    circumferences = fuselage->GetElementCircumferences();
 
     EXPECT_EQ(circumferences.size(), 3);
     EXPECT_NEAR(circumferences["D150_Fuselage_CSection1IDElement1"], 2 * M_PI, 0.5  ); // the interpolation can gives significant difference from the perfect circle
@@ -282,22 +282,22 @@ TEST_F(TestCreatorFuselage, setMaximalCircumferenceOfElements_MultipleFuselagesM
     std::map<std::string, double>::iterator it;
     double scale, maxCircBerfore, maxCircAfter;
 
-    circumferencesBefore = fuselage->GetCircumferenceOfElements();
+    circumferencesBefore = fuselage->GetElementCircumferences();
     scale = 3.3;
     maxCircBerfore = fuselage->GetMaximalCircumferenceOfElements();
     fuselage->SetMaximalCircumferenceOfElements(scale * maxCircBerfore);
-    circumferencesAfter = fuselage->GetCircumferenceOfElements();
+    circumferencesAfter = fuselage->GetElementCircumferences();
     for(it = circumferencesBefore.begin(); it != circumferencesBefore.end(); it++){
         EXPECT_NEAR(circumferencesAfter[it->first], it->second * scale, 0.0001 );
     }
 
 
     setVariables("TestData/multiple_fuselages.xml", "FuselageUnconventionalOrdering");
-    circumferencesBefore = fuselage->GetCircumferenceOfElements();
+    circumferencesBefore = fuselage->GetElementCircumferences();
     scale = 0.3;
     maxCircBerfore = fuselage->GetMaximalCircumferenceOfElements();
     fuselage->SetMaximalCircumferenceOfElements(scale * maxCircBerfore);
-    circumferencesAfter = fuselage->GetCircumferenceOfElements();
+    circumferencesAfter = fuselage->GetElementCircumferences();
     for(it = circumferencesBefore.begin(); it != circumferencesBefore.end(); it++){
         EXPECT_NEAR(circumferencesAfter[it->first], it->second * scale, 0.0001 );
     }
@@ -305,11 +305,11 @@ TEST_F(TestCreatorFuselage, setMaximalCircumferenceOfElements_MultipleFuselagesM
 
 
     setVariables("TestData/multiple_fuselages.xml", "SimpleFuselageCircumference");
-    circumferencesBefore = fuselage->GetCircumferenceOfElements();
+    circumferencesBefore = fuselage->GetElementCircumferences();
     scale = 0.9;
     maxCircBerfore = fuselage->GetMaximalCircumferenceOfElements();
     fuselage->SetMaximalCircumferenceOfElements(scale * maxCircBerfore);
-    circumferencesAfter = fuselage->GetCircumferenceOfElements();
+    circumferencesAfter = fuselage->GetElementCircumferences();
     for(it = circumferencesBefore.begin(); it != circumferencesBefore.end(); it++){
         EXPECT_NEAR(circumferencesAfter[it->first], it->second * scale, 0.0001 );
     }
@@ -317,29 +317,29 @@ TEST_F(TestCreatorFuselage, setMaximalCircumferenceOfElements_MultipleFuselagesM
 
 
     setVariables("TestData/multiple_fuselages.xml", "SimpleFuselage3");
-    circumferencesBefore = fuselage->GetCircumferenceOfElements();
+    circumferencesBefore = fuselage->GetElementCircumferences();
     scale = 4;
     maxCircBerfore = fuselage->GetMaximalCircumferenceOfElements();
     fuselage->SetMaximalCircumferenceOfElements(scale * maxCircBerfore);
-    circumferencesAfter = fuselage->GetCircumferenceOfElements();
+    circumferencesAfter = fuselage->GetElementCircumferences();
     for(it = circumferencesBefore.begin(); it != circumferencesBefore.end(); it++){
         EXPECT_NEAR(circumferencesAfter[it->first], it->second * scale, 0.0001 );
     }
     scale = 1.0/4.0;
     maxCircBerfore = fuselage->GetMaximalCircumferenceOfElements();
     fuselage->SetMaximalCircumferenceOfElements(scale * maxCircBerfore);
-    circumferencesAfter = fuselage->GetCircumferenceOfElements();
+    circumferencesAfter = fuselage->GetElementCircumferences();
     for(it = circumferencesBefore.begin(); it != circumferencesBefore.end(); it++){
         EXPECT_NEAR(circumferencesAfter[it->first], it->second, 0.0001 );
     }
 
 
     setVariables("TestData/multiple_fuselages.xml", "SimpleFuselage4");
-    circumferencesBefore = fuselage->GetCircumferenceOfElements();
+    circumferencesBefore = fuselage->GetElementCircumferences();
     scale = 4;
     maxCircBerfore = fuselage->GetMaximalCircumferenceOfElements();
     fuselage->SetMaximalCircumferenceOfElements(scale * maxCircBerfore);
-    circumferencesAfter = fuselage->GetCircumferenceOfElements();
+    circumferencesAfter = fuselage->GetElementCircumferences();
     for(it = circumferencesBefore.begin(); it != circumferencesBefore.end(); it++){
         EXPECT_NEAR(circumferencesAfter[it->first], it->second * scale, 0.0001 );
     }
