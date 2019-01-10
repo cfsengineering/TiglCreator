@@ -33,6 +33,8 @@
 
 #include <QPushButton>
 
+class TIGLViewerWindow;
+
 /**
  * @brief Main class to articulate the modification interface.
  *
@@ -54,8 +56,6 @@
  * @author Malo Drougard
  *
  */
-
-class TIGLViewerWindow;
 class ModificatorManager: public QObject {
     Q_OBJECT
 
