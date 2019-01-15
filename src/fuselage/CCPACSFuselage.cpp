@@ -748,8 +748,9 @@ void CCPACSFuselage::SetLengthBetween(const std::string& startElement, const std
 
 
     // bring endP on the x axis
-    // We perform a extrinsic rotation in the order Z Y X, so it should be equivalent to the intrinsic cpacs rotation
+    // We perform a extrinsic rotation in the order Z -Y -X, so it should be equivalent to the intrinsic cpacs rotation
     // in the order X Y' Z''
+    // TODO fix the rotation bug
     CTiglTransformation rotEndToX4d;
     rotEndToX4d.SetIdentity();
     double rotGradZ = atan2(endP.y, endP.x);
@@ -757,7 +758,7 @@ void CCPACSFuselage::SetLengthBetween(const std::string& startElement, const std
     rotEndToX4d.AddRotationZ(-rotZ);
     double rotGradY = atan2(endP.z, sqrt( (endP.x * endP.x)  + (endP.y * endP.y )));
     double rotY = CTiglTransformation::RadianToDegree(rotGradY);
-    rotEndToX4d.AddRotationY(-rotY);
+    rotEndToX4d.AddRotationY(rotY);
 
     endP = rotEndToX4d * endP;
 

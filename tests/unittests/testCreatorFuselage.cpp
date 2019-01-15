@@ -158,13 +158,13 @@ TEST_F(TestCreatorFuselage, setLength_SimpleModel)
     EXPECT_NEAR(3.2, lengthAfter, 0.0001);
 
     // TODO: write cpacs file from tigl
-    /*
-    fuselage.SetLengthBetween("D150_Fuselage_1Section1IDElement1","D150_Fuselage_1Section3IDElement1",10.5);
-    lengthAfter = fuselage.GetLength();
+
+    fuselage->SetLengthBetween("D150_Fuselage_1Section1IDElement1","D150_Fuselage_1Section3IDElement1",10.5);
+    lengthAfter = fuselage->GetLength();
     EXPECT_NEAR(10.5, lengthAfter, 0.0001);
 
     ASSERT_EQ( SUCCESS, tixiSaveDocument(tixiHandle, "TestData/Output/simpletest-out.cpacs.xml" ) );
-    */
+
 
 }
 
