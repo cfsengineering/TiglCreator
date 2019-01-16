@@ -1003,7 +1003,8 @@ void CCPACSFuselage::ScaleCircumferenceOfElements(std::vector<std::string> eleme
 
     // Update the tigl object
     circumferences.clear(); // the circumferences of each element as change
-    GetConfiguration().WriteCPACS(GetConfiguration().GetUID());
+
+    // GetConfiguration().WriteCPACS(GetConfiguration().GetUID()); // write in TIXI memory (should not be call there, but in the Modificator manager)
     Invalidate();
 }
 
