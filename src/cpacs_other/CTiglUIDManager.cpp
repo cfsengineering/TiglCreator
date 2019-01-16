@@ -155,7 +155,7 @@ void CTiglUIDManager::AddGeometricComponent(const std::string& uid, ITiglGeometr
     }
 
     CTiglRelativelyPositionedComponent* tmp = dynamic_cast<CTiglRelativelyPositionedComponent*>(componentPtr);
-    if (tmp && (componentPtr->GetComponentType() & TIGL_COMPONENT_PHYSICAL) ) {
+    if (tmp && (componentPtr->GetComponentIntent() & TIGL_INTENT_PHYSICAL) ) {
         relativeComponents[uid] = tmp;
     }
     allShapes[uid] = componentPtr;
@@ -169,6 +169,12 @@ bool CTiglUIDManager::TryRemoveGeometricComponent(const std::string & uid)
         return false;
     }
     allShapes.erase(it);
+
+    const RelativeComponentContainerType::iterator it2 = relativeComponents.find(uid);
+    if (it2 != relativeComponents.end()) {
+        relativeComponents.erase(it2);
+    }
+
     return true;
 }
 

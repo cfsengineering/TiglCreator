@@ -35,6 +35,10 @@ namespace generated
     // CPACSWingShell
 
     // generated from /xsd:schema/xsd:complexType[926]
+    /// @brief Cells of the wing.
+    /// 
+    /// WingCells type, containing all the cells of the wing.
+    /// 
     class CPACSWingCells
     {
     public:
@@ -42,7 +46,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSWingCells();
 
-        TIGL_EXPORT CCPACSWingShell* GetParent() const;
+        TIGL_EXPORT CCPACSWingShell* GetParent();
+
+        TIGL_EXPORT const CCPACSWingShell* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

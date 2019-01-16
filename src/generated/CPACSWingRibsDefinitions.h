@@ -35,6 +35,11 @@ namespace generated
     // CPACSWingComponentSegmentStructure
 
     // generated from /xsd:schema/xsd:complexType[948]
+    /// @brief Ribs of the wing.
+    /// 
+    /// RibDefinitions type, containing the definition of all
+    /// ribs of the wing.
+    /// 
     class CPACSWingRibsDefinitions
     {
     public:
@@ -42,7 +47,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSWingRibsDefinitions();
 
-        TIGL_EXPORT CCPACSWingCSStructure* GetParent() const;
+        TIGL_EXPORT CCPACSWingCSStructure* GetParent();
+
+        TIGL_EXPORT const CCPACSWingCSStructure* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

@@ -35,6 +35,11 @@ namespace generated
     // CPACSLongFloorBeamsAssembly
 
     // generated from /xsd:schema/xsd:complexType[517]
+    /// @brief longFloorBeamType
+    /// 
+    /// longFloorBeam type, containing a long. floor beam
+    /// definition
+    /// 
     class CPACSLongFloorBeam
     {
     public:
@@ -42,7 +47,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSLongFloorBeam();
 
-        TIGL_EXPORT CCPACSLongFloorBeamsAssembly* GetParent() const;
+        TIGL_EXPORT CCPACSLongFloorBeamsAssembly* GetParent();
+
+        TIGL_EXPORT const CCPACSLongFloorBeamsAssembly* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

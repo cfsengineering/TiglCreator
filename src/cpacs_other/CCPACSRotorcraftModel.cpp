@@ -23,10 +23,10 @@
 namespace tigl
 {
 CCPACSRotorcraftModel::CCPACSRotorcraftModel(CCPACSConfiguration* config)
-    : generated::CPACSRotorcraftModel(config ? &config->GetUIDManager() : NULL), CTiglRelativelyPositionedComponent(NULL, NULL), config(config) {}
+    : generated::CPACSRotorcraftModel(config ? &config->GetUIDManager() : NULL), CTiglRelativelyPositionedComponent(static_cast<std::string*>(NULL), NULL), config(config) {}
 
 CCPACSRotorcraftModel::CCPACSRotorcraftModel(CTiglUIDManager* uidMgr)
-    : generated::CPACSRotorcraftModel(uidMgr), CTiglRelativelyPositionedComponent(NULL, NULL), config(NULL) {}
+    : generated::CPACSRotorcraftModel(uidMgr), CTiglRelativelyPositionedComponent(static_cast<std::string*>(NULL), NULL), config(NULL) {}
 
 std::string CCPACSRotorcraftModel::GetDefaultedUID() const {
     return generated::CPACSRotorcraftModel::GetUID();
@@ -35,8 +35,14 @@ std::string CCPACSRotorcraftModel::GetDefaultedUID() const {
 // Returns the Geometric type of this component, e.g. Wing or Fuselage
 TiglGeometricComponentType CCPACSRotorcraftModel::GetComponentType() const
 {
-    return (TIGL_COMPONENT_PHYSICAL | TIGL_COMPONENT_PLANE);
+    return TIGL_COMPONENT_PLANE;
 }
+
+TiglGeometricComponentIntent CCPACSRotorcraftModel::GetComponentIntent() const
+{
+    return TIGL_INTENT_PHYSICAL;
+}
+
 
 PNamedShape CCPACSRotorcraftModel::BuildLoft() const
 {

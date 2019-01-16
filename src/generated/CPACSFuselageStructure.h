@@ -43,6 +43,11 @@ namespace generated
     // CPACSFuselage
 
     // generated from /xsd:schema/xsd:complexType[383]
+    /// @brief fuselageStructureType
+    /// 
+    /// FuselageStructure type, containing data of the fuselage's
+    /// structure
+    /// 
     class CPACSFuselageStructure
     {
     public:
@@ -50,7 +55,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSFuselageStructure();
 
-        TIGL_EXPORT CCPACSFuselage* GetParent() const;
+        TIGL_EXPORT CCPACSFuselage* GetParent();
+
+        TIGL_EXPORT const CCPACSFuselage* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

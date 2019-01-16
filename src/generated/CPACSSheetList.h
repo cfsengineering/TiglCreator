@@ -36,6 +36,12 @@ namespace generated
     // CPACSStructuralProfile
 
     // generated from /xsd:schema/xsd:complexType[799]
+    /// @brief List of sheets, connecting 2-dimensional profile
+    /// points.
+    /// 
+    /// SheetList type, containing a list of sheets. Each sheet
+    /// combines two points to one sheet.
+    /// 
     class CPACSSheetList
     {
     public:
@@ -43,7 +49,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSSheetList();
 
-        TIGL_EXPORT CPACSStructuralProfile* GetParent() const;
+        TIGL_EXPORT CPACSStructuralProfile* GetParent();
+
+        TIGL_EXPORT const CPACSStructuralProfile* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

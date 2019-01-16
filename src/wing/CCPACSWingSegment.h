@@ -71,9 +71,6 @@ public:
     TIGL_EXPORT void SetFromElementUID(const std::string& value) OVERRIDE;
     TIGL_EXPORT void SetToElementUID(const std::string& value) OVERRIDE;
 
-    // Returns the wing this segment belongs to
-    TIGL_EXPORT CCPACSWing& GetWing() const;
-
     TIGL_EXPORT TopoDS_Shape GetInnerClosure(TiglCoordinateSystem referenceCS = GLOBAL_COORDINATE_SYSTEM,
                                              TiglShapeModifier mod            = UNMODIFIED_SHAPE) const;
     TIGL_EXPORT TopoDS_Shape GetOuterClosure(TiglCoordinateSystem referenceCS = GLOBAL_COORDINATE_SYSTEM,
@@ -214,8 +211,15 @@ public:
 
     TIGL_EXPORT TiglGeometricComponentType GetComponentType() const OVERRIDE
     {
-        return TIGL_COMPONENT_WINGSEGMENT | TIGL_COMPONENT_SEGMENT | TIGL_COMPONENT_LOGICAL;
+        return TIGL_COMPONENT_WINGSEGMENT;
     }
+
+    TIGL_EXPORT TiglGeometricComponentIntent GetComponentIntent() const OVERRIDE
+    {
+        return TIGL_INTENT_LOGICAL;
+    }
+
+    TIGL_EXPORT CTiglTransformation GetParentTransformation() const;
 
 protected:
     // Cleanup routine
@@ -254,7 +258,6 @@ private:
 
     CTiglWingConnection  innerConnection;      /**< Inner segment connection (root)         */
     CTiglWingConnection  outerConnection;      /**< Outer segment connection (tip)          */
-    CCPACSWing*          wing;                 /**< Parent wing                             */
 
     bool                 loftLinearly = false; /**< Set to true to speed up lofting of the
                                                  * segment. This removes the dependency on

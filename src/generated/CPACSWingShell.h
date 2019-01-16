@@ -37,6 +37,18 @@ namespace generated
     // CPACSWingComponentSegmentStructure
 
     // generated from /xsd:schema/xsd:complexType[957]
+    /// @brief Shells of the wing.
+    /// 
+    /// Within the wingShellType the upper and lower skin of a
+    /// and the skin stringers are defined. At 'skin' and 'stringer' the
+    /// skin and stringer properties of the complete componentSegment are
+    /// defined. If different skin or stringer properties should be
+    /// defined in a special region of the wing this can be done within
+    /// 'cells'.
+    /// If the stringer should not be defined explicite, they
+    /// can be defined implizite by defining an equivalent material layer
+    /// and using a composite as material.
+    /// 
     class CPACSWingShell
     {
     public:
@@ -44,7 +56,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSWingShell();
 
-        TIGL_EXPORT CCPACSWingCSStructure* GetParent() const;
+        TIGL_EXPORT CCPACSWingCSStructure* GetParent();
+
+        TIGL_EXPORT const CCPACSWingCSStructure* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

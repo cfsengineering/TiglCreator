@@ -35,6 +35,10 @@ namespace generated
     // CPACSAircraftModel
 
     // generated from /xsd:schema/xsd:complexType[398]
+    /// @brief genericGeometryComponentsType
+    /// 
+    /// 
+    /// 
     class CPACSGenericGeometryComponents
     {
     public:
@@ -42,7 +46,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSGenericGeometryComponents();
 
-        TIGL_EXPORT CCPACSAircraftModel* GetParent() const;
+        TIGL_EXPORT CCPACSAircraftModel* GetParent();
+
+        TIGL_EXPORT const CCPACSAircraftModel* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

@@ -35,6 +35,11 @@ namespace generated
     // CPACSRotorcraftModel
 
     // generated from /xsd:schema/xsd:complexType[781]
+    /// @brief rotorsType
+    /// 
+    /// Rotors type, containing all the rotors (mainRotors,
+    /// tailRotors, fenestrons, propellers, ...) of an rotorcraft model.
+    /// 
     class CPACSRotors
     {
     public:
@@ -42,7 +47,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSRotors();
 
-        TIGL_EXPORT CCPACSRotorcraftModel* GetParent() const;
+        TIGL_EXPORT CCPACSRotorcraftModel* GetParent();
+
+        TIGL_EXPORT const CCPACSRotorcraftModel* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

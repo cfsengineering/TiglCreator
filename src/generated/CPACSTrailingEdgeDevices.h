@@ -35,6 +35,10 @@ namespace generated
     // CPACSControlSurfaces
 
     // generated from /xsd:schema/xsd:complexType[876]
+    /// @brief Definition of the wings trailing edge devices.
+    /// 
+    /// Definition of the wings trailing edge devices.
+    /// 
     class CPACSTrailingEdgeDevices
     {
     public:
@@ -42,7 +46,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSTrailingEdgeDevices();
 
-        TIGL_EXPORT CCPACSControlSurfaces* GetParent() const;
+        TIGL_EXPORT CCPACSControlSurfaces* GetParent();
+
+        TIGL_EXPORT const CCPACSControlSurfaces* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

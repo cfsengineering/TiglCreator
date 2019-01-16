@@ -35,6 +35,11 @@ namespace generated
     // CPACSTrailingEdgeDevice
 
     // generated from /xsd:schema/xsd:complexType[190]
+    /// @brief Control surface tracks (mechnaical link between control
+    /// surface and parent).
+    /// 
+    /// 
+    /// 
     class CPACSControlSurfaceTracks
     {
     public:
@@ -42,7 +47,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSControlSurfaceTracks();
 
-        TIGL_EXPORT CCPACSTrailingEdgeDevice* GetParent() const;
+        TIGL_EXPORT CCPACSTrailingEdgeDevice* GetParent();
+
+        TIGL_EXPORT const CCPACSTrailingEdgeDevice* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

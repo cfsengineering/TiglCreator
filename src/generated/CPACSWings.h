@@ -39,6 +39,11 @@ namespace generated
     // CPACSRotorcraftModel
 
     // generated from /xsd:schema/xsd:complexType[970]
+    /// @brief wingsType
+    /// 
+    /// Wings type, containing all the lifting surfaces (wings,
+    /// HTPs, VTPs, canards...) of an aircraft model.
+    /// 
     class CPACSWings
     {
     public:
@@ -54,7 +59,19 @@ namespace generated
         }
 
         template<typename P>
-        P* GetParent() const
+        P* GetParent()
+        {
+#ifdef HAVE_STDIS_SAME
+            static_assert(std::is_same<P, CCPACSAircraftModel>::value || std::is_same<P, CCPACSRotorcraftModel>::value, "template argument for P is not a parent class of CPACSWings");
+#endif
+            if (!IsParent<P>()) {
+                throw CTiglError("bad parent");
+            }
+            return static_cast<P*>(m_parent);
+        }
+
+        template<typename P>
+        const P* GetParent() const
         {
 #ifdef HAVE_STDIS_SAME
             static_assert(std::is_same<P, CCPACSAircraftModel>::value || std::is_same<P, CCPACSRotorcraftModel>::value, "template argument for P is not a parent class of CPACSWings");

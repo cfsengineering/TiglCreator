@@ -64,7 +64,7 @@
      <x>0</x>
      <y>0</y>
      <width>783</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">
@@ -203,7 +203,6 @@
       <string>Rotorcraft</string>
      </property>
      <addaction name="drawRotorsAction"/>
-     <addaction name="drawRotorDisksAction"/>
      <addaction name="showRotorPropertiesAction"/>
     </widget>
     <widget class="QMenu" name="menuRotorBlades">
@@ -518,7 +517,7 @@
   </action>
   <action name="showAllWingsAndFuselagesAction">
    <property name="text">
-    <string>Show all Fuselages and Wings</string>
+    <string>Show the complete Aircraft</string>
    </property>
    <property name="statusTip">
     <string>Show all Fuselages and Wings</string>
@@ -706,14 +705,6 @@
    </property>
    <property name="toolTip">
     <string>Show only one rotor</string>
-   </property>
-  </action>
-  <action name="drawRotorDisksAction">
-   <property name="text">
-    <string>Show a Rotor Disk</string>
-   </property>
-   <property name="toolTip">
-    <string>Show only one rotor disk</string>
    </property>
   </action>
   <action name="showRotorPropertiesAction">

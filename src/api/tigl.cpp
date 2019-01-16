@@ -6812,7 +6812,7 @@ TIGL_COMMON_EXPORT TiglReturnCode tiglCheckPointInside(TiglCPACSConfigurationHan
         // get component
         tigl::ITiglGeometricComponent& component = config.GetUIDManager().GetGeometricComponent(componentUID);
 
-        const TopoDS_Shape& shape = component.GetLoft()->Shape();
+        const TopoDS_Shape shape = component.GetLoft()->Shape();
         *isInside = IsPointInsideShape(shape, gp_Pnt(px, py, pz)) ? TIGL_TRUE : TIGL_FALSE;
 
         return TIGL_SUCCESS;
@@ -6956,4 +6956,66 @@ TiglReturnCode tiglExportConfiguration(TiglCPACSConfigurationHandle cpacsHandle,
         LOG(ERROR) << "Caught an exception in tiglExportConfiguration!";
     }
     return TIGL_ERROR;
+}
+
+TiglReturnCode tiglConfigurationGetBoundingBox(TiglCPACSConfigurationHandle cpacsHandle, double *minX, double *minY, double *minZ, double *maxX, double *maxY, double *maxZ)
+{
+    if (!minX) {
+        LOG(ERROR) << "Null pointer for argument minX in tiglConfigurationGetBoundingBox";
+        return TIGL_NULL_POINTER;
+    }
+
+    if (!minY) {
+        LOG(ERROR) << "Null pointer for argument minY in tiglConfigurationGetBoundingBox";
+        return TIGL_NULL_POINTER;
+    }
+
+    if (!minZ) {
+        LOG(ERROR) << "Null pointer for argument minZ in tiglConfigurationGetBoundingBox";
+        return TIGL_NULL_POINTER;
+    }
+
+    if (!maxX) {
+        LOG(ERROR) << "Null pointer for argument maxX in tiglConfigurationGetBoundingBox";
+        return TIGL_NULL_POINTER;
+    }
+
+    if (!maxY) {
+        LOG(ERROR) << "Null pointer for argument maxY in tiglConfigurationGetBoundingBox";
+        return TIGL_NULL_POINTER;
+    }
+
+    if (!maxZ) {
+        LOG(ERROR) << "Null pointer for argument maxZ in tiglConfigurationGetBoundingBox";
+        return TIGL_NULL_POINTER;
+    }
+
+    try {
+        const tigl::CCPACSConfigurationManager& manager = tigl::CCPACSConfigurationManager::GetInstance();
+        tigl::CCPACSConfiguration& config = manager.GetConfiguration(cpacsHandle);
+
+        tigl::CTiglPoint min, max;
+        tigl::ConfigurationGetBoundingBox(config, min, max);
+        *minX = min.x;
+        *minY = min.y;
+        *minZ = min.z;
+        *maxX = max.x;
+        *maxY = max.y;
+        *maxZ = max.z;
+
+        return TIGL_SUCCESS;
+
+    }
+    catch (const tigl::CTiglError& ex) {
+        LOG(ERROR) << "In tiglConfigurationGetBoundingBox: " << ex.what();
+        return ex.getCode();
+    }
+    catch (std::exception& ex) {
+        LOG(ERROR) << "In tiglConfigurationGetBoundingBox: " << ex.what();
+    }
+    catch (...) {
+        LOG(ERROR) << "Caught an exception in tiglConfigurationGetBoundingBox!";
+    }
+    return TIGL_ERROR;
+
 }

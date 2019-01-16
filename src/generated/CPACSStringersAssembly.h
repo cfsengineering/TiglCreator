@@ -35,6 +35,11 @@ namespace generated
     // CPACSFuselageStructure
 
     // generated from /xsd:schema/xsd:complexType[840]
+    /// @brief stringersAssemblyType
+    /// 
+    /// StringersAssembly type, containing an assembly of
+    /// stringers (new V1.5)
+    /// 
     class CPACSStringersAssembly
     {
     public:
@@ -42,7 +47,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSStringersAssembly();
 
-        TIGL_EXPORT CCPACSFuselageStructure* GetParent() const;
+        TIGL_EXPORT CCPACSFuselageStructure* GetParent();
+
+        TIGL_EXPORT const CCPACSFuselageStructure* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

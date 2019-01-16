@@ -68,7 +68,7 @@ TIGLViewerWindow::TIGLViewerWindow()
 {
     setupUi(this);
 
-    setWindowTitle(QString("TiGL Viewer %1").arg(TIGL_MAJOR_VERSION));
+    setTiglWindowTitle(QString("TiGL Viewer %1").arg(TIGL_MAJOR_VERSION));
 
     tiglViewerSettings = &TIGLViewerSettings::Instance();
     settingsDialog = new TIGLViewerSettingsDialog(*tiglViewerSettings, this);
@@ -238,7 +238,18 @@ void TIGLViewerWindow::closeConfiguration()
         delete cpacsConfiguration;
         cpacsConfiguration = NULL;
     }
-    setWindowTitle(QString("TiGL Viewer %1").arg(TIGL_MAJOR_VERSION));
+    setTiglWindowTitle(QString("TiGL Viewer %1").arg(TIGL_MAJOR_VERSION));
+}
+
+void TIGLViewerWindow::setTiglWindowTitle(const QString &title, bool forceTitle)
+{
+    if (forceTitle) {
+        QMainWindow::setWindowTitle(title);
+        preferredTitle = title;
+    }
+    else if (preferredTitle.isEmpty()) {
+        QMainWindow::setWindowTitle(title);
+    }
 }
 
 void TIGLViewerWindow::openRecentFile()
@@ -340,7 +351,7 @@ void TIGLViewerWindow::reopenFile()
 
 void TIGLViewerWindow::setCurrentFile(const QString &fileName)
 {
-    setWindowTitle(QString("%2 - TiGL Viewer %1")
+    setTiglWindowTitle(QString("%2 - TiGL Viewer %1")
                    .arg(TIGL_MAJOR_VERSION)
                    .arg(QDir::toNativeSeparators(QFileInfo(fileName).absoluteFilePath())));
 
@@ -576,7 +587,7 @@ void TIGLViewerWindow::connectConfiguration()
 
 
     // CPACS Aircraft Actions
-    connect(showAllWingsAndFuselagesAction, SIGNAL(triggered()), cpacsConfiguration, SLOT(drawAllFuselagesAndWings()));
+    connect(showAllWingsAndFuselagesAction, SIGNAL(triggered()), cpacsConfiguration, SLOT(drawConfiguration()));
     connect(showAllWingsAndFuselagesSurfacePointsAction, SIGNAL(triggered()), cpacsConfiguration, SLOT(drawAllFuselagesAndWingsSurfacePoints()));
     connect(drawFusedAircraftAction, SIGNAL(triggered()), cpacsConfiguration, SLOT(drawFusedAircraft()));
     connect(drawIntersectionAction, SIGNAL(triggered()), cpacsConfiguration, SLOT(drawIntersectionLine()));
@@ -608,7 +619,6 @@ void TIGLViewerWindow::connectConfiguration()
 
     // CPACS Rotorcraft Actions
     connect(drawRotorsAction, SIGNAL(triggered()), cpacsConfiguration, SLOT(drawRotor()));
-    connect(drawRotorDisksAction, SIGNAL(triggered()), cpacsConfiguration, SLOT(drawRotorDisk()));
     connect(showRotorPropertiesAction, SIGNAL(triggered()), cpacsConfiguration, SLOT(showRotorProperties()));
 
     // Export functions
@@ -812,7 +822,6 @@ void TIGLViewerWindow::updateMenus()
     drawFarFieldAction->setEnabled(hasFarField);
     drawSystemsAction->setEnabled(hasACSystems);
     drawRotorsAction->setEnabled(nRotors > 0);
-    drawRotorDisksAction->setEnabled(nRotors > 0);
     menuRotorcraft->setEnabled((nRotors > 0) || (nRotorBlades > 0));
     menuRotorBlades->setEnabled(nRotorBlades > 0);
     menuWings->setEnabled(nWings - nRotorBlades > 0);

@@ -35,6 +35,11 @@ namespace generated
     // CPACSFuselageStructure
 
     // generated from /xsd:schema/xsd:complexType[113]
+    /// @brief cargoCrossBeamsAssemblyType
+    /// 
+    /// CargoCrossBeamsAssembly type, containing cargo
+    /// crossBeam assemblys
+    /// 
     class CPACSCargoCrossBeamsAssembly
     {
     public:
@@ -42,7 +47,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSCargoCrossBeamsAssembly();
 
-        TIGL_EXPORT CCPACSFuselageStructure* GetParent() const;
+        TIGL_EXPORT CCPACSFuselageStructure* GetParent();
+
+        TIGL_EXPORT const CCPACSFuselageStructure* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

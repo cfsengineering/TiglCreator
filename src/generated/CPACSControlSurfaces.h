@@ -36,6 +36,12 @@ namespace generated
     // CPACSComponentSegment
 
     // generated from /xsd:schema/xsd:complexType[192]
+    /// @brief controlSurfacesType
+    /// 
+    /// Definition of the outer shape, structure and deflection
+    /// of all control surfaces (flaps, slats, soiler, ailerons...) of
+    /// the wing.
+    /// 
     class CPACSControlSurfaces
     {
     public:
@@ -43,7 +49,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSControlSurfaces();
 
-        TIGL_EXPORT CCPACSWingComponentSegment* GetParent() const;
+        TIGL_EXPORT CCPACSWingComponentSegment* GetParent();
+
+        TIGL_EXPORT const CCPACSWingComponentSegment* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

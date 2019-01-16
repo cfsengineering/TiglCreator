@@ -16,7 +16,6 @@
 
 #pragma once
 
-#include <boost/optional.hpp>
 #include <TopoDS_Shape.hxx>
 
 #include "generated/CPACSPressureBulkheadAssemblyPosition.h"
@@ -37,6 +36,7 @@ public:
     TIGL_EXPORT std::string GetDefaultedUID() const OVERRIDE;
     TIGL_EXPORT PNamedShape GetLoft() const OVERRIDE;
     TIGL_EXPORT TiglGeometricComponentType GetComponentType() const OVERRIDE;
+    TIGL_EXPORT TiglGeometricComponentIntent GetComponentIntent() const OVERRIDE;
 
     TIGL_EXPORT void Invalidate();
 

@@ -35,6 +35,10 @@ namespace generated
     // CPACSWingSpar
 
     // generated from /xsd:schema/xsd:complexType[815]
+    /// @brief Spar definition points on the wing.
+    /// 
+    /// sparPositionsType, containing multiple sparPositions.
+    /// 
     class CPACSSparPositions
     {
     public:
@@ -42,7 +46,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSSparPositions();
 
-        TIGL_EXPORT CCPACSWingSpars* GetParent() const;
+        TIGL_EXPORT CCPACSWingSpars* GetParent();
+
+        TIGL_EXPORT const CCPACSWingSpars* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

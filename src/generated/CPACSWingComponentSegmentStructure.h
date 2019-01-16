@@ -42,6 +42,11 @@ namespace generated
     // CPACSTrailingEdgeDevice
 
     // generated from /xsd:schema/xsd:complexType[928]
+    /// @brief Structure of the wing
+    /// 
+    /// wingComponentSegmentStructure type, containing the
+    /// whole structue (skins, ribs, spars...) of the wing.
+    /// 
     class CPACSWingComponentSegmentStructure
     {
     public:
@@ -57,7 +62,19 @@ namespace generated
         }
 
         template<typename P>
-        P* GetParent() const
+        P* GetParent()
+        {
+#ifdef HAVE_STDIS_SAME
+            static_assert(std::is_same<P, CCPACSWingComponentSegment>::value || std::is_same<P, CCPACSTrailingEdgeDevice>::value, "template argument for P is not a parent class of CPACSWingComponentSegmentStructure");
+#endif
+            if (!IsParent<P>()) {
+                throw CTiglError("bad parent");
+            }
+            return static_cast<P*>(m_parent);
+        }
+
+        template<typename P>
+        const P* GetParent() const
         {
 #ifdef HAVE_STDIS_SAME
             static_assert(std::is_same<P, CCPACSWingComponentSegment>::value || std::is_same<P, CCPACSTrailingEdgeDevice>::value, "template argument for P is not a parent class of CPACSWingComponentSegmentStructure");

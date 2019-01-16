@@ -83,6 +83,7 @@ public:
 
     // Returns the Geometric type of this component, e.g. Wing or Fuselage
     TIGL_EXPORT virtual TiglGeometricComponentType GetComponentType() const OVERRIDE;
+    TIGL_EXPORT TiglGeometricComponentIntent GetComponentIntent() const OVERRIDE;
 
 private:
     struct AuxiliaryGeomCache
@@ -136,7 +137,7 @@ private:
  * 
  * The reference axis is given in normal.
  */
-TIGL_EXPORT bool PointIsInfrontSparGeometry(gp_Ax1 normal, gp_Pnt point, TopoDS_Shape sparGeometry);
+TIGL_EXPORT bool PointIsInfrontSparGeometry(gp_Dir normal, gp_Pnt point, TopoDS_Shape sparGeometry);
 
 } // end namespace tigl
 

@@ -19,6 +19,7 @@
 
 #include <boost/optional.hpp>
 #include <boost/utility/in_place_factory.hpp>
+#include <CCPACSEnginePylons.h>
 #include <CCPACSExternalObjects.h>
 #include <CCPACSFuselages.h>
 #include <CCPACSWings.h>
@@ -37,6 +38,11 @@ namespace generated
     // CPACSAircraft
 
     // generated from /xsd:schema/xsd:complexType[53]
+    /// @brief aircraftModelType
+    /// 
+    /// AircraftModel type, containing a complete aircraft
+    /// model (Geometry and all specific data).
+    /// 
     class CPACSAircraftModel
     {
     public:
@@ -64,6 +70,9 @@ namespace generated
         TIGL_EXPORT virtual const boost::optional<CCPACSWings>& GetWings() const;
         TIGL_EXPORT virtual boost::optional<CCPACSWings>& GetWings();
 
+        TIGL_EXPORT virtual const boost::optional<CCPACSEnginePylons>& GetEnginePylons() const;
+        TIGL_EXPORT virtual boost::optional<CCPACSEnginePylons>& GetEnginePylons();
+
         TIGL_EXPORT virtual const boost::optional<CCPACSExternalObjects>& GetGenericGeometryComponents() const;
         TIGL_EXPORT virtual boost::optional<CCPACSExternalObjects>& GetGenericGeometryComponents();
 
@@ -73,6 +82,9 @@ namespace generated
         TIGL_EXPORT virtual CCPACSWings& GetWings(CreateIfNotExistsTag);
         TIGL_EXPORT virtual void RemoveWings();
 
+        TIGL_EXPORT virtual CCPACSEnginePylons& GetEnginePylons(CreateIfNotExistsTag);
+        TIGL_EXPORT virtual void RemoveEnginePylons();
+
         TIGL_EXPORT virtual CCPACSExternalObjects& GetGenericGeometryComponents(CreateIfNotExistsTag);
         TIGL_EXPORT virtual void RemoveGenericGeometryComponents();
 
@@ -80,10 +92,19 @@ namespace generated
         CTiglUIDManager* m_uidMgr;
 
         std::string                            m_uID;
+
+        /// Name of the aircraft model.
         std::string                            m_name;
+
+        /// Description of the aircraft model.
         boost::optional<std::string>           m_description;
+
         boost::optional<CCPACSFuselages>       m_fuselages;
+
         boost::optional<CCPACSWings>           m_wings;
+
+        boost::optional<CCPACSEnginePylons>    m_enginePylons;
+
         boost::optional<CCPACSExternalObjects> m_genericGeometryComponents;
 
     private:

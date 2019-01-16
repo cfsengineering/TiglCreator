@@ -34,6 +34,13 @@ namespace generated
     // CPACSWingRibsPositioning
 
     // generated from /xsd:schema/xsd:complexType[758]
+    /// @brief Definition of the rotation of the ribs.
+    /// 
+    /// The rotation around z describes the rotation around the
+    /// wings midplane normal axis. The defaults to 90°. The reference
+    /// for the 'zero-angle' of the z-rotation is defined in
+    /// ribRotationReference.
+    /// 
     class CPACSRibRotation
     {
     public:
@@ -41,7 +48,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSRibRotation();
 
-        TIGL_EXPORT CCPACSWingRibsPositioning* GetParent() const;
+        TIGL_EXPORT CCPACSWingRibsPositioning* GetParent();
+
+        TIGL_EXPORT const CCPACSWingRibsPositioning* GetParent() const;
 
         TIGL_EXPORT virtual void ReadCPACS(const TixiDocumentHandle& tixiHandle, const std::string& xpath);
         TIGL_EXPORT virtual void WriteCPACS(const TixiDocumentHandle& tixiHandle, const std::string& xpath) const;
@@ -56,6 +65,11 @@ namespace generated
         CCPACSWingRibsPositioning* m_parent;
 
         boost::optional<CPACSRibRotation_ribRotationReference> m_ribRotationReference;
+
+        /// The rotation around z describes the rotation
+        /// around the wings midplane normal axis. The defaults to 90°. The
+        /// reference for the 'zero-angle' of the z-rotation is defined in
+        /// ribRotationReference.
         double                                                 m_z;
 
     private:

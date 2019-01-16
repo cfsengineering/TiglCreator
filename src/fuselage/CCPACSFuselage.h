@@ -66,7 +66,7 @@ public:
 
     TIGL_EXPORT std::string GetDefaultedUID() const OVERRIDE;
 
-    TIGL_EXPORT PNamedShape GetLoft(TiglCoordinateSystem cs = GLOBAL_COORDINATE_SYSTEM);
+    TIGL_EXPORT PNamedShape GetLoft(TiglCoordinateSystem cs = GLOBAL_COORDINATE_SYSTEM) const;
 
     // Get section count
     TIGL_EXPORT int GetSectionCount() const;
@@ -103,7 +103,8 @@ public:
     TIGL_EXPORT double GetCircumference(int segmentIndex, double eta);
 
     // Returns the Component Type TIGL_COMPONENT_FUSELAGE
-    TIGL_EXPORT TiglGeometricComponentType GetComponentType() const OVERRIDE {return TIGL_COMPONENT_FUSELAGE | TIGL_COMPONENT_PHYSICAL;}
+    TIGL_EXPORT TiglGeometricComponentType GetComponentType() const OVERRIDE {return TIGL_COMPONENT_FUSELAGE; }
+    TIGL_EXPORT TiglGeometricComponentIntent GetComponentIntent() const OVERRIDE {return TIGL_INTENT_PHYSICAL;}
 
     // Returns the point where the distance between the selected fuselage and the ground is at minimum.
     // The Fuselage could be turned with a given angle at at given axis, specified by a point and a direction.
@@ -120,12 +121,12 @@ public:
     TIGL_EXPORT std::vector<gp_Pnt> GetGuideCurvePoints() const;
 
     // create the line intersecting the fuselage for the stringer/frame profile
-    TIGL_EXPORT gp_Lin Intersection(gp_Pnt pRef, double angleRef);
-    TIGL_EXPORT gp_Lin Intersection(const CCPACSFuselageStringerFramePosition& pos);
+    TIGL_EXPORT gp_Lin Intersection(gp_Pnt pRef, double angleRef) const;
+    TIGL_EXPORT gp_Lin Intersection(const CCPACSFuselageStringerFramePosition& pos) const;
 
     // project the edge/wire onto the fuselage loft
-    TIGL_EXPORT TopoDS_Wire projectConic(TopoDS_Shape wireOrEdge, gp_Pnt origin);
-    TIGL_EXPORT TopoDS_Wire projectParallel(TopoDS_Shape wireOrEdge, gp_Dir direction);
+    TIGL_EXPORT TopoDS_Wire projectConic(TopoDS_Shape wireOrEdge, gp_Pnt origin) const;
+    TIGL_EXPORT TopoDS_Wire projectParallel(TopoDS_Shape wireOrEdge, gp_Dir direction) const;
 
 protected:
     void BuildGuideCurves(TopoDS_Compound& cache) const;

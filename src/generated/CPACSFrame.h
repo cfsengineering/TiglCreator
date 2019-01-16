@@ -35,6 +35,10 @@ namespace generated
     // CPACSFramesAssembly
 
     // generated from /xsd:schema/xsd:complexType[361]
+    /// @brief frameType
+    /// 
+    /// frame type, containing frame definition (V1.5+)
+    /// 
     class CPACSFrame
     {
     public:
@@ -42,7 +46,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSFrame();
 
-        TIGL_EXPORT CCPACSFramesAssembly* GetParent() const;
+        TIGL_EXPORT CCPACSFramesAssembly* GetParent();
+
+        TIGL_EXPORT const CCPACSFramesAssembly* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

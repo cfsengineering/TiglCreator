@@ -36,6 +36,11 @@ namespace generated
     // CPACSCargoCrossBeamsAssembly
 
     // generated from /xsd:schema/xsd:complexType[232]
+    /// @brief crossBeamAssemblyPositionType
+    /// 
+    /// CrossBeamAssemblyPosition type, containing the position
+    /// of a crossBeam assembly
+    /// 
     class CPACSCrossBeamAssemblyPosition
     {
     public:
@@ -43,7 +48,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSCrossBeamAssemblyPosition();
 
-        TIGL_EXPORT CCPACSCargoCrossBeamsAssembly* GetParent() const;
+        TIGL_EXPORT CCPACSCargoCrossBeamsAssembly* GetParent();
+
+        TIGL_EXPORT const CCPACSCargoCrossBeamsAssembly* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;
@@ -75,9 +82,18 @@ namespace generated
         CTiglUIDManager* m_uidMgr;
 
         std::string                              m_uID;
+
+        /// UID of profile based structural element to be
+        /// used as crossbeam
         std::string                              m_structuralElementUID;
+
+        /// UID of the frame to which the crossbeam is
+        /// attached
         std::string                              m_frameUID;
+
+        /// Referenze z position of the crossbeam
         double                                   m_positionZ;
+
         boost::optional<CPACSAlignmentCrossBeam> m_alignment;
 
     private:

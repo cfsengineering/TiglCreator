@@ -35,6 +35,11 @@ namespace generated
     // CPACSStringersAssembly
 
     // generated from /xsd:schema/xsd:complexType[839]
+    /// @brief arbitraryStringerType
+    /// 
+    /// ArbitraryStringer type, containing stringer definition
+    /// (CPACS V1.5+)
+    /// 
     class CPACSStringer
     {
     public:
@@ -42,7 +47,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSStringer();
 
-        TIGL_EXPORT CCPACSStringersAssembly* GetParent() const;
+        TIGL_EXPORT CCPACSStringersAssembly* GetParent();
+
+        TIGL_EXPORT const CCPACSStringersAssembly* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

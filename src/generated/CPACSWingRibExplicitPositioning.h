@@ -31,6 +31,11 @@ namespace generated
     // CPACSWingRibsDefinition
 
     // generated from /xsd:schema/xsd:complexType[946]
+    /// @brief wingRibExplicitPositioningType
+    /// 
+    /// Use this type for an explicit positioning of every
+    /// single rib.
+    /// 
     class CPACSWingRibExplicitPositioning
     {
     public:
@@ -38,7 +43,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSWingRibExplicitPositioning();
 
-        TIGL_EXPORT CCPACSWingRibsDefinition* GetParent() const;
+        TIGL_EXPORT CCPACSWingRibsDefinition* GetParent();
+
+        TIGL_EXPORT const CCPACSWingRibsDefinition* GetParent() const;
 
         TIGL_EXPORT virtual void ReadCPACS(const TixiDocumentHandle& tixiHandle, const std::string& xpath);
         TIGL_EXPORT virtual void WriteCPACS(const TixiDocumentHandle& tixiHandle, const std::string& xpath) const;
@@ -58,9 +65,22 @@ namespace generated
     protected:
         CCPACSWingRibsDefinition* m_parent;
 
+        /// The ribReference is the reference line for the geometrical rib
+        /// placement. It can either
+        /// be a sparUID or "trailingEdge" or "leadingEdge"
         std::string m_startReference;
+
+        /// etaStart defines the start of the rib defined by the startReference and
+        /// the eta coordinate
         double      m_etaStart;
+
+        /// The ribReference is the reference line for the geometrical rib
+        /// placement. It can either
+        /// be a sparUID or "trailingEdge" or "leadingEdge"
         std::string m_endReference;
+
+        /// etaEnd defines the end of the rib defined by the endReference and the
+        /// eta coordinate
         double      m_etaEnd;
 
     private:

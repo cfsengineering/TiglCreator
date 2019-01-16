@@ -36,6 +36,11 @@ namespace generated
     // CPACSSkin
 
     // generated from /xsd:schema/xsd:complexType[808]
+    /// @brief fuselageSkinSegmentType
+    /// 
+    /// FuselageSkinSegment type, containing material on skin
+    /// over circumference
+    /// 
     class CPACSSkinSegments
     {
     public:
@@ -43,7 +48,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSSkinSegments();
 
-        TIGL_EXPORT CPACSSkin* GetParent() const;
+        TIGL_EXPORT CPACSSkin* GetParent();
+
+        TIGL_EXPORT const CPACSSkin* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

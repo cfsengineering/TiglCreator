@@ -35,6 +35,11 @@ namespace generated
     // CPACSWing
 
     // generated from /xsd:schema/xsd:complexType[143]
+    /// @brief ComponentSegments of the wing.
+    /// 
+    /// ComponentSegments type, containing all the
+    /// componentSegments of the wing.
+    /// 
     class CPACSComponentSegments
     {
     public:
@@ -42,7 +47,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSComponentSegments();
 
-        TIGL_EXPORT CCPACSWing* GetParent() const;
+        TIGL_EXPORT CCPACSWing* GetParent();
+
+        TIGL_EXPORT const CCPACSWing* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

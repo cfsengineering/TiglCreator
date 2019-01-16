@@ -33,10 +33,16 @@ class CCPACSPositioning;
 namespace generated
 {
     // This class is used in:
+    // CPACSEnginePylon
     // CPACSFuselage
     // CPACSWing
 
     // generated from /xsd:schema/xsd:complexType[726]
+    /// @brief Positionings of the wing.
+    /// 
+    /// Positionings type, containing all the positionings of
+    /// the wing sections.
+    /// 
     class CPACSPositionings
     {
     public:

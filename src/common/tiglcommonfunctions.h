@@ -137,10 +137,10 @@ TIGL_EXPORT int GetComponentHashCode(tigl::ITiglGeometricComponent&);
 TIGL_EXPORT TopoDS_Edge EdgeSplineFromPoints(const std::vector<gp_Pnt>& points);
 
 // Computes the intersection point of a face and an edge
-TIGL_EXPORT bool GetIntersectionPoint(const TopoDS_Face& face, const TopoDS_Edge& edge, gp_Pnt& dst);
+TIGL_EXPORT bool GetIntersectionPoint(const TopoDS_Face& face, const TopoDS_Edge& edge, gp_Pnt& dst, double tolerance = Precision::Confusion());
 
 // Computes the intersection point of a face and a wire
-TIGL_EXPORT bool GetIntersectionPoint(const TopoDS_Face& face, const TopoDS_Wire& wire, gp_Pnt& dst);
+TIGL_EXPORT bool GetIntersectionPoint(const TopoDS_Face& face, const TopoDS_Wire& wire, gp_Pnt& dst, double tolerance = Precision::Confusion());
 
 // Comuptes the intersection points of two wires
 TIGL_EXPORT bool GetIntersectionPoint(const TopoDS_Wire& wire1, const TopoDS_Wire& wire2, intersectionPointList& intersectionPoints, const double tolerance=Precision::SquareConfusion());
@@ -260,6 +260,11 @@ TIGL_EXPORT TopoDS_Shape RemoveDuplicateEdges(const TopoDS_Shape& shape);
 inline double Radians(double degree)
 {
     return degree / 180. * M_PI;
+}
+
+inline double Degrees(double radians)
+{
+    return 180.*radians / M_PI;
 }
 
 // Clamps val between min and max

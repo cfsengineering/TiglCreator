@@ -35,6 +35,11 @@ namespace generated
     // CPACSWingSpar
 
     // generated from /xsd:schema/xsd:complexType[817]
+    /// @brief Spar segments of the wing.
+    /// 
+    /// sparSegmentsType, containing multiple sparSegment
+    /// (=spars) of the wing.
+    /// 
     class CPACSSparSegments
     {
     public:
@@ -42,7 +47,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSSparSegments();
 
-        TIGL_EXPORT CCPACSWingSpars* GetParent() const;
+        TIGL_EXPORT CCPACSWingSpars* GetParent();
+
+        TIGL_EXPORT const CCPACSWingSpars* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

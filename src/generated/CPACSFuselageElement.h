@@ -35,6 +35,10 @@ namespace generated
     // CPACSFuselageElements
 
     // generated from /xsd:schema/xsd:complexType[371]
+    /// @brief fuselageElementType
+    /// 
+    /// FuselageElement type, containing fuselage element data
+    /// 
     class CPACSFuselageElement
     {
     public:
@@ -42,7 +46,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSFuselageElement();
 
-        TIGL_EXPORT CCPACSFuselageSectionElements* GetParent() const;
+        TIGL_EXPORT CCPACSFuselageSectionElements* GetParent();
+
+        TIGL_EXPORT const CCPACSFuselageSectionElements* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;
@@ -71,9 +77,16 @@ namespace generated
         CTiglUIDManager* m_uidMgr;
 
         std::string                  m_uID;
+
+        /// Name of fuselage element
         std::string                  m_name;
+
+        /// Description of fuselage element
         boost::optional<std::string> m_description;
+
+        /// Reference to a fuselage profile
         std::string                  m_profileUID;
+
         CCPACSTransformation         m_transformation;
 
     private:

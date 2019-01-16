@@ -155,7 +155,8 @@ public:
     // Returns the outer profile points as read from TIXI. The points are already transformed.
     TIGL_EXPORT std::vector<CTiglPoint> GetRawEndProfilePoints();
 
-    TIGL_EXPORT TiglGeometricComponentType GetComponentType() const OVERRIDE { return TIGL_COMPONENT_FUSELSEGMENT | TIGL_COMPONENT_SEGMENT | TIGL_COMPONENT_LOGICAL; }
+    TIGL_EXPORT TiglGeometricComponentType GetComponentType() const OVERRIDE { return TIGL_COMPONENT_FUSELSEGMENT; }
+    TIGL_EXPORT TiglGeometricComponentIntent GetComponentIntent() const OVERRIDE { return  TIGL_INTENT_LOGICAL; }
 
     // Returns the number of faces in the loft. This depends on the number of guide curves as well as if the fuselage has a symmetry plane.
     TIGL_EXPORT int GetNumberOfLoftFaces() const;
@@ -168,9 +169,6 @@ private:
 
     // Cleanup routine
     void Cleanup();
-
-    // Builds up the shape cache
-    void UpdateShapeCache() const;
 
     // Builds the loft between the two segment sections
     PNamedShape BuildLoft() const OVERRIDE;

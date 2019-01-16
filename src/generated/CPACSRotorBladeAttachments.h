@@ -35,6 +35,11 @@ namespace generated
     // CPACSRotorHub
 
     // generated from /xsd:schema/xsd:complexType[766]
+    /// @brief rotorBladeAttachmentsType
+    /// 
+    /// RotorBladeAttachments type, containing all hinges and
+    /// blade UIDs attached to the current rotor hub.
+    /// 
     class CPACSRotorBladeAttachments
     {
     public:
@@ -42,7 +47,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSRotorBladeAttachments();
 
-        TIGL_EXPORT CCPACSRotorHub* GetParent() const;
+        TIGL_EXPORT CCPACSRotorHub* GetParent();
+
+        TIGL_EXPORT const CCPACSRotorHub* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;

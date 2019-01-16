@@ -36,6 +36,11 @@ namespace generated
     // CPACSFuselageSegments
 
     // generated from /xsd:schema/xsd:complexType[380]
+    /// @brief fuselageSegmentType
+    /// 
+    /// FuselageSegment type, containing data of a fuselage
+    /// segment
+    /// 
     class CPACSFuselageSegment
     {
     public:
@@ -43,7 +48,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSFuselageSegment();
 
-        TIGL_EXPORT CCPACSFuselageSegments* GetParent() const;
+        TIGL_EXPORT CCPACSFuselageSegments* GetParent();
+
+        TIGL_EXPORT const CCPACSFuselageSegments* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;
@@ -78,10 +85,23 @@ namespace generated
         CTiglUIDManager* m_uidMgr;
 
         std::string                        m_uID;
+
+        /// Name of fuselage segment
         std::string                        m_name;
+
+        /// Description of fuselage segment
         boost::optional<std::string>       m_description;
+
+        /// Reference to element from which the segment
+        /// shall start
         std::string                        m_fromElementUID;
+
+        /// Reference to element at which the segment
+        /// shall end
         std::string                        m_toElementUID;
+
+        /// Optional and additional guidecurves to shape
+        /// the outer geometry.
         boost::optional<CCPACSGuideCurves> m_guideCurves;
 
     private:

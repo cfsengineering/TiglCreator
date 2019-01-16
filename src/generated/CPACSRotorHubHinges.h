@@ -35,6 +35,11 @@ namespace generated
     // CPACSRotorBladeAttachment
 
     // generated from /xsd:schema/xsd:complexType[769]
+    /// @brief rotorHubHingesType
+    /// 
+    /// RotorHubHinges type, defining hinges used to attach a
+    /// rotor blade to the rotor head.
+    /// 
     class CPACSRotorHubHinges
     {
     public:
@@ -42,7 +47,9 @@ namespace generated
 
         TIGL_EXPORT virtual ~CPACSRotorHubHinges();
 
-        TIGL_EXPORT CCPACSRotorBladeAttachment* GetParent() const;
+        TIGL_EXPORT CCPACSRotorBladeAttachment* GetParent();
+
+        TIGL_EXPORT const CCPACSRotorBladeAttachment* GetParent() const;
 
         TIGL_EXPORT CTiglUIDManager& GetUIDManager();
         TIGL_EXPORT const CTiglUIDManager& GetUIDManager() const;
@@ -61,6 +68,7 @@ namespace generated
 
         CTiglUIDManager* m_uidMgr;
 
+        /// Definition of a flap, lead-lag or pitch hinge.
         std::vector<unique_ptr<CCPACSRotorHinge> > m_hinges;
 
     private:
