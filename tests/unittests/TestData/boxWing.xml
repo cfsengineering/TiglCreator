@@ -4340,7 +4340,6 @@
             <name>CFM56-5A5</name>
             <description>Engine for the D150 taken from TWDat</description>
             <engineUID isLink="True">4CM036</engineUID>
-            <parentUID isLink="True">D150_Pylon</parentUID>
             <transformation uID="4CM036_D150_transformation1">
               <scaling uID="4CM036_D150_transformation1_scaling1">
                 <x>1.0</x>
@@ -4361,82 +4360,6 @@
           </engine>
         </engines>
         <enginePylons>
-          <enginePylon uID="D150_Pylon">
-            <parentUID isLink="True">D150_VAMP_W1</parentUID>
-            <transformation uID="D150_Pylon_transformation1"/>
-            <loadCarryingStructure>
-              <pylonBox uID="P1box">
-                <innerSideShell>
-                  <material>
-                    <materialUID isLink="True">aluminium2024</materialUID>
-                    <thickness>0.01</thickness>
-                  </material>
-                </innerSideShell>
-                <outerSideShell>
-                  <material>
-                    <materialUID isLink="True">aluminium2024</materialUID>
-                    <thickness>0.01</thickness>
-                  </material>
-                </outerSideShell>
-                <lowerShell uID="P1box_lowerShell1">
-                  <material>
-                    <materialUID isLink="True">aluminium2024</materialUID>
-                    <thickness>0.01</thickness>
-                  </material>
-                </lowerShell>
-                <upperShell uID="P1box_upperShell1">
-                  <material>
-                    <materialUID isLink="True">aluminium2024</materialUID>
-                    <thickness>0.01</thickness>
-                  </material>
-                </upperShell>
-                <ribsDefinitions>
-                  <ribsDefinition>
-                    <ribCrossSection>
-                      <material>
-                        <materialUID isLink="True">aluminium2024</materialUID>
-                        <thickness>0.01</thickness>
-                      </material>
-                    </ribCrossSection>
-                  </ribsDefinition>
-                </ribsDefinitions>
-              </pylonBox>
-              <frontPyramid>
-                <material>
-                  <materialUID isLink="True">aluminium2024</materialUID>
-                  <thickness>0.01</thickness>
-                </material>
-              </frontPyramid>
-              <shackles>
-                <frontAttachmentShackle>
-                  <material>
-                    <materialUID isLink="True">aluminium2024</materialUID>
-                    <thickness>0.01</thickness>
-                  </material>
-                </frontAttachmentShackle>
-                <rearAttachmentShackle>
-                  <material>
-                    <materialUID isLink="True">aluminium2024</materialUID>
-                    <thickness>0.01</thickness>
-                  </material>
-                </rearAttachmentShackle>
-              </shackles>
-              <wingAttachments>
-                <frontAttachment>
-                  <material>
-                    <materialUID isLink="True">aluminium2024</materialUID>
-                    <thickness>0.01</thickness>
-                  </material>
-                </frontAttachment>
-                <rearAttachment>
-                  <material>
-                    <materialUID isLink="True">aluminium2024</materialUID>
-                    <thickness>0.01</thickness>
-                  </material>
-                </rearAttachment>
-              </wingAttachments>
-            </loadCarryingStructure>
-          </enginePylon>
         </enginePylons>
         <landingGear>
           <noseGears>

@@ -7,5 +7,6 @@ examples/python_internal/.idea/
 *.patch
 /.vs
 /cmake-build-debug
-/.idea
+/cmake-build-release
+.idea
 CMakeLists.txt.user
