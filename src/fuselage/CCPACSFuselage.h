@@ -199,10 +199,6 @@ protected:
 
     void ScaleCircumferenceOfElements(std::vector<std::string> elementsToScale, double scaleFactor) ;
 
-    FuselageGraph& GetGraph();
-
-
-
 
 private:
     // get short name for loft

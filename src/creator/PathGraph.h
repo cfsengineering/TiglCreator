@@ -5,89 +5,105 @@
 #ifndef TIGL_PATHGRAPH_H
 #define TIGL_PATHGRAPH_H
 
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace tigl {
 
-    class PathGraph {
+/**
+ * @brief This class represent path graph object.
+ * By path graph, we mean that the graph can be represented as simple directed line.
+ *
+ *
+ */
+class PathGraph {
 
-    public:
-        PathGraph();
+public:
+  /**
+   * Create a empty path graph.
+   */
+  PathGraph();
 
-        void set( std::vector<std::string> newGraph );
-        virtual void clear();
+  /**
+   * Set the path for this graph.
+   * The input represent the path as a vector of string.
+   * The first element of the vector is the root,
+   * the second the second node and so long.
+   * We assume that each node is connected to the previous one by a edge.
+   * @remark Each string of the vector should be unique.
+   * @param newGraph the vector of sting
+   */
+  void set(std::vector<std::string> newGraph);
 
-        inline bool isEmpty() { return graph.size() == 0; };
+  /**
+   * Reset the graph to is empty state.
+   */
+  virtual void clear();
 
-        /**
-         * Return the graph as a vector of string
-         *
-         * @return
-         */
-        inline std::vector<std::string>& getGraph() { return graph; };
+  inline bool isEmpty() { return graph.size() == 0; };
 
+  /**
+   * @return the graph as a vector of string
+   */
+  inline std::vector<std::string> getGraphAsVector() { return graph; };
 
-        /**
-         * Returns the element UIDs  between uid1 and uid2.
-         * The order of the given elements are not important, but the returned list will be ordered
-         * The two given elements are also contained in the list.
-         *
-         * @remark  If the graph is empty or it don't contain one of the UID, it will return a empty list
-         * @param startUID
-         * @param endUID
-         * @return
-         */
-        std::vector<std::string> getElementsInBetween(std::string uid1, std::string uid2) ;
+  /**
+   * Returns the node between node 1 and node 2.
+   * The order of the given nodes can be switched.
+   * @remark: The two given nodes are also contained in the list.
+   * @remark  If the graph is empty or it don't contain one of the node, it will
+   * return a empty list
+   * @param startNode
+   * @param endNode
+   * @return a vector of string
+   */
+  std::vector<std::string> getElementsInBetween(std::string uid1,
+                                                std::string uid2);
 
-        /**
-         * Returns the element UIDs before uid.
-         * The uid is not contains in the returned list.
-         *
-         * @remark If the graph is empty or it don't contain the given UID, it will return a empty list
-         * @param uid
-         * @return
-         */
-        std::vector<std::string> getElementsBefore(std::string uid) ;
+  /**
+   * Returns the nodes that are before the given node.
+   * @remark The given node is not contain in the returned vector.
+   * @remark If the graph is empty or it don't contain the given UID, it will
+   * return a empty list
+   * @param node
+   * @return
+   */
+  std::vector<std::string> getElementsBefore(std::string uid);
 
+  /**
+   * Returns the nodes that are after the given node.
+   * @remark The uid is not contains in the list.
+   * @remark  If the graph is empty or it don't contain the given node, it will
+   * return a empty list
+   * @param uid
+   * @return
+   */
+  std::vector<std::string> getElementsAfter(std::string uid);
 
+  /**
+   * Returns the first element of the graph.
+   * @remark If the graph is empty, it will throw a exception
+   * @return
+   */
+  std::string getRoot();
 
-        /**
-         * Returns the element UIDs after uid.
-         * The uid is not contains in the list.
-         *
-         * @remark  If the graph is empty or it don't contain the given UID, it will return a empty list
-         * @param uid
-         * @return
-         */
-        std::vector<std::string> getElementsAfter(std::string uid) ;
+  /**
+   * Return the last element of the graph path
+   * @remark If the graph is empty, it will throw a exception
+   * @return
+   */
+  std::string getLeaf();
 
+  /**
+   * @return  true if the node is in the graph, false otherwise.
+   */
+  bool contains(std::string uid);
 
-        /**
-         * Returns the first element of the graph path
-         *
-         * @remark If the graph is empty, it will throw a exception
-         * @return
-         */
-        std::string getRoot();
+  // todo implement [] operator
 
-        /**
-         * Return the last element of the graph path
-         *
-         *
-         * @remark If the graph is empty, it will throw a exception
-         * @return
-         */
-        std::string getLeaf();
+private:
+  std::vector<std::string> graph;
+};
 
-
-
-
-    private:
-
-        std::vector<std::string> graph;
-
-    };
-
-}
-#endif //TIGL_PATHGRAPH_H
+} // namespace tigl
+#endif // TIGL_PATHGRAPH_H

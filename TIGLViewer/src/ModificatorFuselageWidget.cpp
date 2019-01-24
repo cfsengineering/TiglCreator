@@ -26,7 +26,7 @@ void ModificatorFuselageWidget::setFuselage(tigl::CCPACSFuselage& newFuselage)
     internalLength = fuselage->GetLength();
     spinBoxLength->setValue(internalLength);
 
-    std::vector<std::string> fusleageGraph = fuselage->GetCreatorGraph().getSimpleGraph();
+    std::vector<std::string> fusleageGraph = fuselage->GetCreatorGraph().getGraphAsVector();
     QStringList elementsUids;
     for (int i = 0; i < fusleageGraph.size(); i++) {
         elementsUids.push_back(QString(fusleageGraph[i].c_str()));

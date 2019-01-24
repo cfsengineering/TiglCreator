@@ -7,26 +7,21 @@
 
 #include "CTiglPoint.h"
 
-
+#include "PathGraph.h"
 #include <map>
 #include <vector>
-#include "PathGraph.h"
 
-namespace tigl
-{
+namespace tigl {
 
 class CCPACSFuselage;
-class FuselageGraph : public PathGraph
-{
+class FuselageGraph : public PathGraph {
 
 public:
+  FuselageGraph();
 
-    FuselageGraph();
-
-    void set(CCPACSFuselage* fuselageInput);
+  void set(CCPACSFuselage *fuselageInput);
 
 protected:
-
 };
-}
-#endif //TIGL_FUSELAGEGRAPH_H
+} // namespace tigl
+#endif // TIGL_FUSELAGEGRAPH_H

@@ -77,6 +77,8 @@ CCPACSFuselage::CCPACSFuselage(CCPACSFuselages* parent, CTiglUIDManager* uidMgr)
         configuration = &parent->GetParent<CCPACSAircraftModel>()->GetConfiguration();
     else
         configuration = &parent->GetParent<CCPACSRotorcraftModel>()->GetConfiguration();
+    graph.set(this);
+
 }
 
 // Destructor
@@ -117,6 +119,8 @@ void CCPACSFuselage::ReadCPACS(const TixiDocumentHandle& tixiHandle, const std::
     generated::CPACSFuselage::ReadCPACS(tixiHandle, fuselageXPath);
 
     ConnectGuideCurveSegments();
+
+    graph.set(this);
 }
 
 // Returns the parent configuration
@@ -622,13 +626,16 @@ TopoDS_Shape transformFuselageProfileGeometry(const CTiglTransformation& fuselTr
 
 double CCPACSFuselage::GetLength()
 {
-    std::string noise = GetGraph().getNoseUID();
-    std::string tail  = GetGraph().getTailUID();
+    std::string noise = graph.getRoot();
+    std::string tail  = graph.getLeaf();
     return GetLengthBetween(noise, tail);
 }
 
 double CCPACSFuselage::GetLengthBetween(const std::string& startElementUID, const std::string& endElementUID)
 {
+    if ( ! (graph.contains(startElementUID) && graph.contains(endElementUID)) ){
+        throw CTiglError("CCPACSFuselage::GetLengthBetween(): invalid input, the given uid are not present.");
+    }
     const std::map<std::string, CTiglPoint>& centers = GetElementCenters();
     CTiglPoint delta                          = centers.at(endElementUID) - centers.at(startElementUID);
     return delta.norm2();
@@ -637,7 +644,7 @@ double CCPACSFuselage::GetLengthBetween(const std::string& startElementUID, cons
 const std::map<std::string, CTiglPoint>& CCPACSFuselage::GetElementCenters()
 {
 
-    if (!  centers.empty()){ // create only the first time
+    if (! centers.empty()){ // create only the first time
         return centers;
     }
 
@@ -669,16 +676,11 @@ const std::map<std::string, CTiglPoint>& CCPACSFuselage::GetElementCenters()
     return centers;
 }
 
-FuselageGraph CCPACSFuselage::GetCreatorGraph()
-{
-    return GetGraph();
-
-}
 
 
 void CCPACSFuselage::SetLength(double newLength){
-    std::string nose = GetGraph().getNoseUID();
-    std::string tail = GetGraph().getTailUID();
+    std::string nose = graph.getRoot();
+    std::string tail = graph.getLeaf();
     SetLengthBetween(nose, tail, newLength);
 }
 
@@ -688,17 +690,14 @@ void CCPACSFuselage::SetLengthBetween(const std::string& startElement, const std
                                         double newPartialLength)
 {
 
-    // todo verify input order
-    std::vector<std::string>& tempGraph = GetGraph().getSimpleGraph();
-
     /*
          * Divide the elements in 3 categories:
          * 1) Elements before start that need not to be modified
          * 2) Elements between that need to create the partial length
          * 3) Elements after end that need to be shifted has the last between element
          */
-    std::vector<std::string> elementsBetween = GetGraph().getElementsInBetween(startElement, endElement);
-    std::vector<std::string> elementsAfter = GetGraph().getElementsAfter(endElement);
+    std::vector<std::string> elementsBetween = graph.getElementsInBetween(startElement, endElement);
+    std::vector<std::string> elementsAfter = graph.getElementsAfter(endElement);
 
     if( elementsBetween.size() < 2 ){
         throw CTiglError("CCPACSFuselage::SetLengthBetween: At least two elements should be contains between stratUID and endUID");
@@ -780,9 +779,9 @@ void CCPACSFuselage::SetLengthBetween(const std::string& startElement, const std
     // Get the origin of each element
     CTiglPoint origin(0, 0, 0);
     CTiglTransformation global;
-    for (int i = 0; i < tempGraph.size(); i++) {
-        global = GetGlobalTransformation(tempGraph[i]);
-        oldGlobalOrigin[tempGraph[i]] = global * origin;
+    for (int i = 0; i < graph.getGraphAsVector().size(); i++) {
+        global = GetGlobalTransformation(graph.getGraphAsVector()[i]);
+        oldGlobalOrigin[graph.getGraphAsVector()[i]] = global * origin;
     }
 
     // Compute the new center point and the new origin of each element in Between
@@ -936,8 +935,8 @@ const std::map<std::string, double>& CCPACSFuselage::GetElementCircumferences()
 
 double CCPACSFuselage::GetMaximalCircumferenceOfElements()
 {
-    std::string noise = GetGraph().getNoseUID();
-    std::string tail = GetGraph().getTailUID();
+    std::string noise = graph.getRoot();
+    std::string tail = graph.getLeaf();
     return GetMaximalCircumferenceOfElementsBetween(noise, tail);
 
 }
@@ -945,7 +944,7 @@ double CCPACSFuselage::GetMaximalCircumferenceOfElements()
 
 double CCPACSFuselage::GetMaximalCircumferenceOfElementsBetween(std::string startElementUID, std::string endElementUID){
 
-    std::vector<std::string> elementsBetween = GetGraph().getElementsInBetween(startElementUID, endElementUID);
+    std::vector<std::string> elementsBetween = graph.getElementsInBetween(startElementUID, endElementUID);
 
     if (elementsBetween.size() < 1) {
         throw CTiglError("CCPACSFuselage::GetMaximalCircumferenceOfElementsBetween: impossible to get the start and the end correctly");
@@ -1020,7 +1019,7 @@ void CCPACSFuselage::SetMaximalCircumferenceOfElementsBetween(std::string startU
 
     double scaleFactor = newMaximalCircumference / oldMaximalCircumference;
 
-    std::vector<std::string> elementsBetween = GetGraph().getElementsInBetween(startUID, endUID);
+    std::vector<std::string> elementsBetween = graph.getElementsInBetween(startUID, endUID);
 
     if (elementsBetween.size() < 1) {
         throw CTiglError("CCPACSFuselage::GetMaximalCircumferenceOfElementsBetween: impossible to get the start and the end correctly");
@@ -1031,18 +1030,17 @@ void CCPACSFuselage::SetMaximalCircumferenceOfElementsBetween(std::string startU
 
 void CCPACSFuselage::SetMaximalCircumferenceOfElements(double newMaximalCircumference)
 {
-    std::string noiseUID = GetGraph().getNoseUID();
-    std::string tailUID = GetGraph().getTailUID();
+    std::string noiseUID = graph.getRoot();
+    std::string tailUID = graph.getLeaf();
     SetMaximalCircumferenceOfElementsBetween(noiseUID, tailUID, newMaximalCircumference);
 
 }
 
-FuselageGraph& CCPACSFuselage::GetGraph()
-{
-    if( ! graph.isBuild()){
-       graph.build(this);
-    }
+
+FuselageGraph CCPACSFuselage::GetCreatorGraph() {
     return graph;
 }
+
+
 
 } // end namespace tigl
