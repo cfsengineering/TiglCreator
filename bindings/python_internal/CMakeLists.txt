@@ -42,7 +42,7 @@ if (TIGL_BINDINGS_PYTHON_INTERNAL)
         add_custom_command(
             OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/doc.i
             DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/doc/xml/index.xml
-            COMMAND ${PYTHON_EXECUTABLE}
+            COMMAND ${Python_EXECUTABLE}
             ARGS ${PROJECT_SOURCE_DIR}/thirdparty/doxy2swig/doxy2swig.py ${CMAKE_CURRENT_BINARY_DIR}/doc/xml/index.xml ${CMAKE_CURRENT_BINARY_DIR}/doc.i
         )
     endif()
@@ -50,7 +50,7 @@ if (TIGL_BINDINGS_PYTHON_INTERNAL)
 
     include(${SWIG_USE_FILE})
 
-    include_directories(${PYTHON_INCLUDE_PATH})
+    include_directories(${Python_INCLUDE_DIRS})
 
     # add all tigl directories to include path
     set(TIGL_INCLUDES ${PROJECT_SOURCE_DIR}/src/)

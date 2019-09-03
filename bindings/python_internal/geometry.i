@@ -68,6 +68,15 @@
 #include "CTiglInterpolateCurveNetwork.h"
 #include "CTiglPointsToBSplineInterpolation.h"
 #include "CTiglCurvesToSurface.h"
+#include "CTiglSectionElement.h"
+#include "CCPACSPositionings.h"
+#include "CCPACSPositioning.h"
+#include "generated/CPACSPositioning.h"
+#include "generated/CPACSPositionings.h"
+#include "CTiglWingSectionElement.h"
+#include "CTiglFuselageSectionElement.h"
+
+
 %}
 
 
@@ -107,6 +116,12 @@
 %include "CCPACSPointAbsRel.h"
 %include "ECPACSTranslationType.h"
 %include "CTiglTransformation.h"
+%include "generated/CPACSPositioning.h"
+%include "generated/CPACSPositionings.h"
+%include "CCPACSPositionings.h"
+%include "CCPACSPositioning.h"
+%include "CTiglSectionElement.h"
+
 
 // we want to replace Shape with another Shape function that returns by value
 // as returning by ref can cause crashes in python

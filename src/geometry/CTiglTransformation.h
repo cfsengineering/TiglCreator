@@ -105,7 +105,11 @@ public:
     // Transforms a point with the current transformation matrix and
     // returns the transformed point
     TIGL_EXPORT gp_Pnt Transform(const gp_Pnt& point) const;
-    
+
+    // returns the transformed point
+    TIGL_EXPORT CTiglPoint Transform(const CTiglPoint& point) const;
+
+
     // Returns the inverted Transformation
     TIGL_EXPORT CTiglTransformation Inverted() const;
 
@@ -151,6 +155,8 @@ public:
 
     // Compare each value of the transformation matrix and return true if they are all near
     TIGL_EXPORT bool IsNear(const CTiglTransformation& other, double epsilon = 0.0001) const;
+
+
 
 private:
     bool IsUniform() const;

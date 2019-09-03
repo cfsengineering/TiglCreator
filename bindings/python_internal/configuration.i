@@ -31,6 +31,7 @@
 #include "CCPACSConfiguration.h"
 #include "CCPACSConfigurationManager.h"
 #include "CTiglFusePlane.h"
+#include "CCPACSFuselageProfile.h"
 #include "CCPACSWingProfile.h"
 #include "CCPACSFuselageSection.h"
 #include "CCPACSExternalObject.h"
@@ -77,6 +78,13 @@
 #include "CCPACSEnginePylons.h"
 #include "CCPACSEnginePylon.h"
 #include "generated/CPACSRibRotation_ribRotationReference.h"
+#include "generated/CPACSProfileGeometry.h"
+#include "CCPACSFuselageProfile.h"
+#include "CTiglFuselageSectionElement.h"
+#include "CCPACSWingProfile.h"
+#include "CTiglWingSectionElement.h"
+#include "CreateConnectedElementI.h"
+#include "CCPACSWingProfileCST.h"
 %}
 
 %feature("autodoc", "3");
@@ -126,6 +134,7 @@
 %boost_optional(tigl::CCPACSEnginePylons)
 %boost_optional(tigl::CCPACSWingProfiles)
 %boost_optional(tigl::CCPACSFuselageProfiles)
+%boost_optional(tigl::CCPACSProfiles)
 %boost_optional(tigl::CCPACSRotorProfiles)
 
 // ---------------- Other ------------------------------//
@@ -138,6 +147,10 @@
 
 %include "generated/CPACSMaterialDefinition.h"
 %include "CCPACSMaterialDefinition.h"
+%include "CCPACSProfiles.h"
+%include "CCPACSWingProfileCST.h"
+%include "generated/CPACSProfileGeometry.h"
+%include "CreateConnectedElementI.h"
 
 // ----------------- Engines ---------------------------//
 %boost_optional(tigl::CCPACSEngines)
@@ -264,7 +277,8 @@ namespace tigl
 %include "generated/CPACSSkin.h"
 %include "generated/CPACSFuselageStructure.h"
 %include "CCPACSFuselageStructure.h"
-
+%include "CCPACSFuselageProfile.h"
+%include "CTiglFuselageSectionElement.h"
 
 %include "generated/CPACSWingSkin.h"
 %include "CPACSRotor_type.h"
@@ -335,6 +349,8 @@ class CCPACSWingRibsPositioning;
 
 // -------------------- Wing -------------------//
 
+
+%include "CTiglWingSectionElement.h"
 %include "generated/CPACSComponentSegments.h"
 %include "CCPACSWingComponentSegments.h"
 %include "generated/CPACSPositionings.h"
@@ -438,6 +454,9 @@ class CCPACSWingRibsPositioning;
 %include "CCPACSExternalObject.h"
 %include "CTiglWingSegmentList.h"
 %include "CTiglWingChordface.h"
+%include "CCPACSWingProfile.h"
+
+
 
 // ---- Engine Pylon -- //
 %include "generated/CPACSEnginePylon.h"

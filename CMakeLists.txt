@@ -134,8 +134,7 @@ get_target_property(TIXI_INCLUDE_DIRS tixi3 INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(TIXI_LIBRARY ${TIXI_LIBRARIES} LOCATION)
 get_filename_component(TIXI_LIB_PATH ${TIXI_LIBRARY} PATH)
 
-
-find_package( PythonInterp )
+find_package (Python COMPONENTS Interpreter Development  )
 
 OPTION(TIGL_USE_GLOG "Enables advanced logging (requires google glog)" OFF)
 if(TIGL_USE_GLOG)

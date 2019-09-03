@@ -424,6 +424,13 @@ gp_Pnt CTiglTransformation::Transform(const gp_Pnt& point) const
     return gp_Pnt(transformed.X(), transformed.Y(), transformed.Z());
 }
 
+CTiglPoint CTiglTransformation::Transform(const CTiglPoint& point) const
+{
+    return ((*this) * point);
+}
+
+
+
 bool CTiglTransformation::IsUniform() const
 {
     // The following code is copied from gp_Trsf
